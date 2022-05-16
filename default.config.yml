@@ -3,18 +3,37 @@ downloads: ~/.ansible-downloads/
 
 configure_dotfiles: true
 configure_terminal: true
-configure_osx: true
+configure_osx: false
+configure_sublime: false
 
 # Set to 'true' to configure the Dock via dockutil.
-configure_dock: false
-dockitems_remove: []
-# - Launchpad
-# - TV
-# - Podcasts
-# - 'App Store'
-dockitems_persist: []
-# - name: "Sublime Text"
-#   path: "/Applications/Sublime Text.app/"
+configure_dock: true
+dockitems_remove:
+  - Launchpad
+  - TV
+  - Podcasts
+  - 'App Store'
+  - FaceTime
+  - Calendar
+  - Contacts
+  - Notes
+  - Reminders
+  - News
+  - Maps
+  - Mail
+dockitems_persist:
+  - name: "Visual Studio Code"
+    path: "/Applications/Visual Studio Code.app/"
+  - name: "Notion"
+    path: "/Applications/Notion.app/"
+  - name: "Zoom"
+    path: "/Applications/zoom.app/"
+  - name: "Postman"
+    path: "/Applications/Postman.app/"
+  - name: "Docker"
+    path: "/Applications/Docker.app/"
+  - name: "Google Chrome"
+    path: "/Applications/Google Chrome.app/"
 #   pos: 5
 
 configure_sudoers: false
@@ -38,6 +57,7 @@ homebrew_installed_packages:
   # - ansible # Installed via Pip.
   - autoconf
   - bash-completion
+  - cowsay
   - doxygen
   - gettext
   - gifsicle
@@ -48,20 +68,27 @@ homebrew_installed_packages:
   - httpie
   - iperf
   - libevent
-  - sqlite
+  - libffi
   - mcrypt
+  - neovim
   - nmap
   - node
   - nvm
-  - php
-  - ssh-copy-id
-  - cowsay
-  - readline
+  - openblas
   - openssl
+  - php
+  - pkg-config
   - pv
+  - readline
+  - sqlite
+  - ssh-copy-id
   - wget
   - wrk
+  - xz
+  - zlib
   - zsh-history-substring-search
+  - { name: libpq, install_options: build-from-source }
+
 
 homebrew_taps:
   - homebrew/core
@@ -74,13 +101,14 @@ homebrew_cask_apps:
   - dropbox
   - firefox
   - google-chrome
-  - handbrake
   - licecap
+  - moom
+  - notion
+  - postman
   - sequel-ace
   - slack
-  - sublime-text
-  - transmit
-  - vagrant
+  - visual-studio-code
+  - zoom
 
 # See `geerlingguy.mas` role documentation for usage instructions.
 mas_installed_apps: []
