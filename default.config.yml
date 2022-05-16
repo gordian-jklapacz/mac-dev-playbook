@@ -2,7 +2,7 @@
 downloads: ~/.ansible-downloads/
 
 configure_python: true
-configure_dotfiles: true
+configure_dotfiles: false
 configure_terminal: true
 configure_osx: false
 configure_sublime: false
