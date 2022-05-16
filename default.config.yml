@@ -22,27 +22,28 @@ dockitems_remove:
   - News
   - Maps
   - Mail
+  - Photos
 dockitems_persist:
   - name: "Visual Studio Code"
     path: "/Applications/Visual Studio Code.app/"
+    pos: 1
   - name: "Notion"
     path: "/Applications/Notion.app/"
-  - name: "Zoom"
-    path: "/Applications/zoom.app/"
+  - name: "zoom.us"
+    path: "/Applications/zoom.us.app/"
   - name: "Postman"
     path: "/Applications/Postman.app/"
   - name: "Docker"
     path: "/Applications/Docker.app/"
   - name: "Google Chrome"
     path: "/Applications/Google Chrome.app/"
-#   pos: 5
+  - name: "Slack"
+    path: "/Applications/Slack.app/"
 
-configure_sudoers: false
-sudoers_custom_config: ''
-# Example:
-# sudoers_custom_config: |
-#   # Allow users in admin group to use sudo with no password.
-#   %admin ALL=(ALL) NOPASSWD: ALL
+configure_sudoers: true
+sudoers_custom_config: |
+  # Allow users in admin group to use sudo with no password.
+  %admin ALL=(ALL) NOPASSWD: ALL
 
 dotfiles_repo: https://github.com/geerlingguy/dotfiles.git
 dotfiles_repo_accept_hostkey: true
