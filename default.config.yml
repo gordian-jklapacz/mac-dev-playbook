@@ -1,6 +1,7 @@
 ---
 downloads: ~/.ansible-downloads/
 
+configure_python: true
 configure_dotfiles: true
 configure_terminal: true
 configure_osx: false
@@ -157,3 +158,33 @@ sublime_package_control:
 
 # Glob pattern to ansible task files to run after all other tasks are finished.
 post_provision_tasks: []
+
+# ----- For python configuration -----
+pyenv_install_from_package_manager: true
+pyenv_python27_version: "2.7.18"
+pyenv_python37_version: "3.7.13"
+pyenv_python38_version: "3.8.13"
+pyenv_python39_version: "3.9.11"
+pyenv_python310_version: "3.10.3"
+pyenv_python_versions:
+  - "{{ pyenv_python27_version }}"
+  - "{{ pyenv_python37_version }}"
+  - "{{ pyenv_python38_version }}"
+  - "{{ pyenv_python39_version }}"
+  - "{{ pyenv_python310_version }}"
+
+brew_bin_path: "{{ brew_prefix }}/bin"
+brew_prefix: "{{ (ansible_machine == 'arm64') | ternary('/opt/homebrew', '/usr/local') }}"
+brew_libpq: "{{ brew_prefix }}/opt/libpq"
+brew_openssl: "{{ brew_prefix }}/opt/openssl@1.1"
+brew_libpq_bin_path: "{{ brew_libpq }}/bin"
+brew_libpq_include_path: "{{ brew_libpq }}/include"
+brew_libpq_lib_path: "{{ brew_libpq }}/lib"
+brew_openssl_include_path: "{{ brew_openssl }}/include"
+brew_openssl_lib_path: "{{ brew_openssl }}/lib"
+brew_libffi_pkgconfig_path: "{{ brew_prefix }}/opt/libffi/lib/pkgconfig"
+brew_openblas_path: "{{ brew_prefix }}/opt/openblas"
+macosx_deployment_target:
+system_python_path: "{{ ansible_env.HOME }}/Library/Python/3.8/bin"
+zprofile_path:
+zshenv_path:

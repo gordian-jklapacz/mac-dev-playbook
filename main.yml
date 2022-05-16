@@ -24,8 +24,15 @@
     - role: gordian_jklapacz.mac.dock
       when: configure_dock
       tags: ['dock']
+    - name: markosamuli.pyenv
+      when: configure_python
+      tags: ['python']
 
   tasks:
+    - import_tasks: tasks/python.yml
+      when: configure_python
+      tags: ['python']
+
     - import_tasks: tasks/sudoers.yml
       when: configure_sudoers
       tags: ['sudoers']
