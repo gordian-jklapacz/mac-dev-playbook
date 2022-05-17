@@ -21,7 +21,7 @@ function main() {
     [[ ! -d "${setup_dir}" ]] && die "${setup_dir} does not exist, quitting..."
     pushd "${setup_dir}"
         yell "installing dependencies..."
-        ansible-galaxy -r requirements.yml
+        ansible-galaxy install -r requirements.yml
         yell "applying playbook..."
         ansible-playbook main.yml --ask-become-pass
     popd
