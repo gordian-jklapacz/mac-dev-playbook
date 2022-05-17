@@ -88,3 +88,5 @@ pip_packages: []
 post_provision_tasks: []
 
 neovim_path: "{{ homebrew_prefix }}/bin/nvim"
+
+dev_github_dir: "{{ ansible_env.HOME }}/Development/GitHub"
