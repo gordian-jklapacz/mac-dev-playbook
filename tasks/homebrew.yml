@@ -28,3 +28,4 @@
       export CPPFLAGS="{{ homebrew_include | join(" ") }}"
       export OPENBLAS="{{ homebrew_openblas }}"
       export MACOSX_DEPLOYMENT_TARGET={{ macosx_deployment_target }}
+      eval "$(pyenv init --path)"
