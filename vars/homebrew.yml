@@ -1,0 +1,132 @@
+---
+homebrew_installed_packages:
+  - autoconf
+  - autojump
+  - automake
+  - awscli
+  - bash-completion
+  - cloc
+  - coreutils
+  - cowsay
+  - doxygen
+  - enchant
+  - exiftool
+  - fd
+  - fdupes
+  - ffmpeg
+  - freetype
+  - fswatch
+  - gdbm
+  - gettext
+  - gifsicle
+  - git
+  - git-delta
+  - github/gh/gh
+  - go
+  - gpg
+  - graphicsmagick
+  - heroku
+  - hyperfine
+  - inetutils
+  - iperf
+  - jpeg
+  - jpegoptim
+  - jq
+  - lesspipe
+  - libevent
+  - libffi
+  - libmemcached
+  - libpng
+  - { name: libpq, install_options: build-from-source }
+  - libtool
+  - libyaml
+  - mcrypt
+  - memcached
+  - myrepos
+  - ncdu
+  - neovim
+  - nginx
+  - nmap
+  - node
+  - nvm
+  - openblas
+  - openssl
+  - ossp-uuid
+  - pandoc
+  - parallel
+  - pkg-config
+  - postgresql
+  - pre-commit
+  - pv
+  - pwgen
+  - pyenv
+  - qpdf
+  - readline
+  - redis
+  - rsync
+  - sd
+  - shellcheck
+  - sqlite
+  - sqlite3
+  - ssh-copy-id
+  - starship
+  - tcl-tk
+  - tree
+  - watch
+  - watchman
+  - wget
+  - wrk
+  - xz
+  - zlib
+  - zsh-completions
+  - zsh-history-substring-search
+
+homebrew_taps:
+  - heroku/brew
+  - homebrew/cask
+  - homebrew/cask-fonts
+  - homebrew/core
+homebrew_cask_accept_external_apps: true
+homebrew_cask_appdir: /Applications
+homebrew_cask_apps:
+  - chromedriver
+  - docker
+  - dropbox
+  - firefox
+  - google-chrome
+  - licecap
+  - moom
+  - notion
+  - postman
+  - sequel-ace
+  - slack
+  - visual-studio-code
+  - zoom
+homebrew_fonts:
+  - font-fira-code
+  - font-fira-mono
+  - font-fira-mono-for-powerline
+  - font-fira-sans
+homebrew_lib:
+  - -L{{ homebrew_prefix }}/opt/openssl@1.1/lib
+  - -L{{ homebrew_prefix }}/opt/libpq/lib
+  - -L{{ homebrew_prefix }}/opt/libyaml/lib
+  - -L{{ homebrew_prefix }}/opt/zlib/lib
+homebrew_include:
+  - -I{{ homebrew_prefix }}/opt/openssl@1.1/include
+  - -I{{ homebrew_prefix }}/opt/libpq/include
+  - -I{{ homebrew_prefix }}/opt/libyaml/include
+  - -I{{ homebrew_prefix }}/opt/zlib/include
+homebrew_extra_paths:
+  - "{{ homebrew_prefix }}/bin"
+  - "{{ homebrew_prefix }}/opt/libpq/bin"
+  - "{{ system_python_path }}"
+homebrew_openblas: "{{ homebrew_prefix }}/opt/openblas"
+
+macosx_deployment_target: "{{ (ansible_distribution == 'MacOSX') | ternary(ansible_distribution_version, None) }}"
+system_python_path: "{{ ansible_env.HOME }}/Library/Python/3.8/bin"
+zprofile_path: "{{ ansible_env.HOME }}/.zprofile"
+zshenv_path: "{{ ansible_env.HOME }}/.zshenv"
+
+# probably not used
+brew_libffi_pkgconfig_path: "{{ brew_prefix }}/opt/libffi/lib/pkgconfig"

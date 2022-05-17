@@ -1,11 +1,23 @@
 ---
 - name: Update homebrew
   homebrew:
-    name: git
+    name: "{{ item }}"
     state: latest
     update_homebrew: true
+  with_items:
+    - git
+    - svn
   tags:
   - brew
+
+- name: Install fonts
+  homebrew_cask:
+    name: "{{ item.name | default(item) }}"
+    state: present
+    install_options: "{{ item.install_options | default('appdir=' + homebrew_cask_appdir) }}"
+    accept_external_apps: "{{ homebrew_cask_accept_external_apps }}"
+    sudo_password: "{{ ansible_become_password | default(omit) }}"
+  loop: "{{ homebrew_fonts }}"
 
 - name: check if .zprofile exists
   stat:
@@ -23,7 +35,7 @@
     marker: "# {mark} ANSIBLE MANAGED BLOCK python-specific-environments"
     path: "{{ zprofile_path }}"
     block: |
-      export PATH="{{ homebrew_extra_paths | join(":") }}"
+      export PATH="{{ homebrew_extra_paths | join(":") }}:$PATH"
       export LDFLAGS="{{ homebrew_lib | join(" ") }}"
       export CPPFLAGS="{{ homebrew_include | join(" ") }}"
       export OPENBLAS="{{ homebrew_openblas }}"

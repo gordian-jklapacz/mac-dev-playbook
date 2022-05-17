@@ -4,6 +4,7 @@
   vars_files:
     - default.config.yml
     - vars/python.yml
+    - vars/homebrew.yml
 
   pre_tasks:
     - name: Include playbook configuration.
@@ -49,6 +50,9 @@
 
     - import_tasks: tasks/extra-packages.yml
       tags: ['extra-packages']
+    
+    - import_tasks: tasks/vscode.yml
+      tags: ['vscode']
 
     - block:
         - name: Run configured post-provision ansible task files.
