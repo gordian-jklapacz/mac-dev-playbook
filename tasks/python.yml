@@ -51,3 +51,20 @@
   command: pyenv rehash
   tags:
   - pyenv
+
+- name: Ensure pyenvrc file is installed
+  copy:
+    src: files/.pyenvrc
+    dest: "{{ pyenv_root }}/.pyenvrc"
+  changed_when: false
+
+- set_fact:
+    pyenvrc_path: "{{ pyenv_root }}/.pyenvrc"
+  
+- name: Setup zshrc
+  template:
+    src: templates/.zshrc.j2
+    dest: /Users/{{ lookup('env', 'USER') }}/.zshrc
+    owner: "{{ lookup('env', 'USER') }}"
+
+  
