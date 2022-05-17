@@ -1,0 +1,30 @@
+#!/bin/bash
+set -euo pipefail
+
+function yell () 
+{ 
+  echo "$0: $*" >&2
+}
+
+function die () 
+{ 
+  yell "$*"; exit 111
+}
+
+function try () 
+{ 
+  "$@" || die "cannot $*" 
+}
+
+function main() {
+    setup_dir="$HOME/Development/GitHub/setup"
+    [[ ! -d "${setup_dir}" ]] && die "${setup_dir} does not exist, quitting..."
+    pushd "${setup_dir}"
+        yell "installing dependencies..."
+        ansible-galaxy -r requirements.yml
+        yell "applying playbook..."
+        ansible-playbook main.yml --ask-become-pass
+    popd
+}
+
+main

@@ -1,5 +1,5 @@
 #!/bin/bash
-set -euxo pipefail
+set -euo pipefail
 
 function test-if-xcode-tools-installed() {
   res=$(/usr/bin/xcode-select -p)
@@ -40,11 +40,12 @@ function install-ansible() {
 }
 
 function run-installation() {
-  setup_dir="$HOME/dev"
+  dev_dir="$HOME/Development/GitHub"
+  mkdir -p "${dev_dir}"
+  setup_dir="${dev_dir}/setup"
   [[ -d "${setup_dir}" ]] || git clone git@github.com:gordian-jklapacz/mac-dev-playbook "${setup_dir}"
   pushd "${setup_dir}"
-    ansible-galaxy install -r requirements.yml
-    ansible-playbook main.yml --ask-become-pass
+    ./bin/apply
   popd
 }
 
