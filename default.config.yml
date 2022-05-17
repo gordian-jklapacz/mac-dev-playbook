@@ -56,7 +56,6 @@ dotfiles_files:
   - .vimrc
 
 homebrew_installed_packages:
-  # - ansible # Installed via Pip.
   - autoconf
   - bash-completion
   - cowsay
@@ -67,7 +66,6 @@ homebrew_installed_packages:
   - github/gh/gh
   - go
   - gpg
-  - httpie
   - iperf
   - libevent
   - libffi
@@ -83,11 +81,13 @@ homebrew_installed_packages:
   - pv
   - readline
   - sqlite
+  - sqlite3
   - ssh-copy-id
   - wget
   - wrk
   - xz
   - zlib
+  - tcl-tk
   - zsh-history-substring-search
   - { name: libpq, install_options: build-from-source }
 
@@ -96,6 +96,7 @@ homebrew_taps:
   - homebrew/core
   - homebrew/cask
 
+homebrew_cask_accept_external_apps: true
 homebrew_cask_appdir: /Applications
 homebrew_cask_apps:
   - chromedriver
@@ -159,19 +160,20 @@ sublime_package_control:
 
 # Glob pattern to ansible task files to run after all other tasks are finished.
 post_provision_tasks: []
-
+# pyenv_virtualenvwrapper: false
+# pyenv_detect_existing_install: true
 # ----- For python configuration -----
 pyenv_install_from_package_manager: true
 pyenv_python27_version: "2.7.18"
-pyenv_python37_version: "3.7.13"
-pyenv_python38_version: "3.8.13"
-pyenv_python39_version: "3.9.11"
+# pyenv_python37_version: "3.7.13"
+# pyenv_python38_version: "3.8.13"
+# pyenv_python39_version: "3.9.11"
 pyenv_python310_version: "3.10.3"
 pyenv_python_versions:
   - "{{ pyenv_python27_version }}"
-  - "{{ pyenv_python37_version }}"
-  - "{{ pyenv_python38_version }}"
-  - "{{ pyenv_python39_version }}"
+  # - "{{ pyenv_python37_version }}"
+  # - "{{ pyenv_python38_version }}"
+  # - "{{ pyenv_python39_version }}"
   - "{{ pyenv_python310_version }}"
 
 brew_bin_path: "{{ brew_prefix }}/bin"
@@ -187,5 +189,5 @@ brew_libffi_pkgconfig_path: "{{ brew_prefix }}/opt/libffi/lib/pkgconfig"
 brew_openblas_path: "{{ brew_prefix }}/opt/openblas"
 macosx_deployment_target:
 system_python_path: "{{ ansible_env.HOME }}/Library/Python/3.8/bin"
-zprofile_path:
-zshenv_path:
+zprofile_path: "{{ ansible_env.HOME }}/.zprofile"
+zshenv_path: "{{ ansible_env.HOME }}/.zshenv"

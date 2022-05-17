@@ -1,63 +1,33 @@
 ---
-- name: Set path to .zprofile
-  ansible.builtin.set_fact:
-    zprofile_path: "{{ ansible_env.HOME }}/.zprofile"
-  when: zprofile_path == None
-    
-- name: Set path to .zshenv
-  ansible.builtin.set_fact:
-    zshenv_path: "{{ ansible_env.HOME }}/.zshenv"
-  when: zshenv_path == None
-
-- name: Check whether .zshenv exists
-  ansible.builtin.stat:
+- name: check if .zprofile exists
+  stat:
     path: "{{ zshenv_path }}"
-  register: zshenv_st
+  register: zprofile_st
 
-- name: Configure .zshenv and create if missing
-  when: not zshenv_st.stat.exists
-  block:
-    - name: Load pyenv in .zshenv (Git checkout)
-      ansible.builtin.blockinfile:
-        dest: "{{ zshenv_path }}"
-        create: true
-        mode: "0644"
-        marker: "# {mark} ANSIBLE MANAGED BLOCK: pyenv"
-        block: |
-          export PATH="{{ system_python_path }}:{{ brew_bin_path }}:{{ brew_libpq_bin_path }}:$PATH"
-      when: (ansible_system == 'Linux' and not pyenv_homebrew_on_linux) or
-        (ansible_os_family == 'Darwin' and not pyenv_install_from_package_manager)
-    - name: Load pyenv in .zshenv (Homebrew install)
-      ansible.builtin.blockinfile:
-        dest: "{{ zshenv_path }}"
-        create: true
-        mode: "0644"
-        marker: "# {mark} ANSIBLE MANAGED BLOCK: pyenv"
-        block: |
-          export PATH="{{ system_python_path }}:{{ brew_bin_path }}:{{ brew_libpq_bin_path }}:$PATH"
-      when: (ansible_system == 'Linux' and pyenv_homebrew_on_linux) or
-        (ansible_os_family == 'Darwin' and pyenv_install_from_package_manager)
+- name: create .zprofile
+  file:
+    path: "{{ zshenv_path }}"
+    state: touch
+  when: not zprofile_st.stat.exists
 
-- ansible.builtin.set_fact:
-    ldflags: 'export LDFLAGS="-L{{ brew_openssl_lib_path }} -L{{ brew_libpq_lib_path }}"'
-- ansible.builtin.set_fact:
-    cppflags: 'export CPPFLAGS="-I{{ brew_openssl_include_path }} -I {{ brew_libpq_include_path }}"'
-- ansible.builtin.set_fact:
-    macosx_version: 'export MACOSX_DEPLOYMENT_TARGET={{ ansible_distribution_version }}'
-  when: ansible_distribution == "MacOSX"
-- ansible.builtin.set_fact:
-    pkgconfig: 'export PKG_CONFIG_PATH="{{ brew_libffi_pkgconfig_path }}"'
-- ansible.builtin.set_fact:
-    openblas: 'export OPENBLAS="{{ brew_openblas_path }}"'
+- blockinfile:
+    marker: "# {mark} ANSIBLE MANAGED BLOCK brew-path"
+    path: "{{ zprofile_path }}"
+    block: |
+      export PATH="{{ homebrew_extra_paths | join(":") }}"
+
+- name: setup pyenv+python
+  include_role:
+    name: markosamuli.pyenv
+  when: configure_python
 
 - name: python-specific environment variables
   blockinfile:
     marker: "# {mark} ANSIBLE MANAGED BLOCK python-specific-environments"
     path: "{{ zprofile_path }}"
     block: |
-      {{ ldflags }}
-      {{ cppflags }}
-      {{ macosx_version }}
-      {{ pkgconfig }}
-      {{ openblas }}
+      export LDFLAGS="{{ homebrew_lib | join(" ") }}"
+      export CPPFLAGS="{{ homebrew_include | join(" ") }}"
+      export OPENBLAS="{{ homebrew_openblas }}"
+      export MACOSX_DEPLOYMENT_TARGET={{ macosx_deployment_target }}
 

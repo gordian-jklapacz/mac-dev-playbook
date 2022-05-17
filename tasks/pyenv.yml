@@ -1,0 +1,63 @@
+---
+- name: set pyenv path
+  ansible.builtin.set_fact:
+    pyenv_path: "{{ ansible_env.HOME }}/.pyenv"
+  when: pyenv_path is undefined
+
+- name: check if pyenv_path exists
+  ansible.builtin.stat:
+    path: "{{ pyenv_path }}"
+  register: pyenv_path_st
+
+
+- name: check if zprofile exists
+  ansible.builtin.stat:
+    path: "{{ zprofile_path }}"
+  register: zprofile_st
+
+
+- name: set zprofile_path
+  ansible.builtin.set_fact:
+    zprofile_path: "{{ ansible_env.HOME }}/.zprofile"
+
+- name: Pull pyenv code and install from source
+  when: not pyenv_path_st.stat.exists
+  block:
+    - name: pull code
+      ansible.builtin.git:
+        repo: https://github.com/pyenv/pyenv.git
+        dest: "{{ pyenv_path }}"
+    - name: install
+      ansible.builtin.shell: 
+      args:
+        cmd: src/configure && make -C src
+        chdir: "{{ pyenv_path }}"
+      
+# $ cd ~/.pyenv && src/configure && make -C srck
+
+- name: Configure .zprofile and create if missing
+  when: not zprofile_st.stat.exists
+  block:
+    - name: Load pyenv in .zprofile (Git checkout)
+      ansible.builtin.blockinfile:
+        dest: "{{ zprofile_path }}"
+        create: true
+        mode: "0644"
+        marker: "# {mark} ANSIBLE MANAGED BLOCK: pyenv"
+        block: |
+          export PYENV_ROOT="{{ pyenv_path }}" 
+          export PATH="{{ pyenv_path }}/bin:{{ system_python_path }}:{{ brew_bin_path }}:{{ brew_libpq_bin_path }}:$PATH"
+          eval "$(pyenv init --path)" 
+          eval "$(pyenv init -)"
+      when: (ansible_system == 'Linux' and not pyenv_homebrew_on_linux) or
+        (ansible_os_family == 'Darwin' and not pyenv_install_from_package_manager)
+    - name: Load pyenv in .zprofile (Homebrew install)
+      ansible.builtin.blockinfile:
+        dest: "{{ zprofile_path }}"
+        create: true
+        mode: "0644"
+        marker: "# {mark} ANSIBLE MANAGED BLOCK: pyenv"
+        block: |
+          export PATH="{{ system_python_path }}:{{ brew_bin_path }}:{{ brew_libpq_bin_path }}:$PATH"
+      when: (ansible_system == 'Linux' and pyenv_homebrew_on_linux) or
+        (ansible_os_family == 'Darwin' and pyenv_install_from_package_manager)
