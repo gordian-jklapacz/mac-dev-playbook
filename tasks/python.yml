@@ -67,4 +67,11 @@
     dest: /Users/{{ lookup('env', 'USER') }}/.zshrc
     owner: "{{ lookup('env', 'USER') }}"
 
-  
+- name: Bootstrap virtualenv
+  pip:
+    name: ansible
+    virtualenv: "{{ dev_github_dir }}/setup/.venv"
+    virtualenv_site_packages: yes
+    virtualenv_python: '{{ pyenv_root }}/versions/{{ item }}/bin/python{% if item | regex_search("^3") %}3{% endif %}'
+  with_items:
+  - 3.10.3

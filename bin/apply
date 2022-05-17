@@ -19,6 +19,9 @@ function try ()
 function main() {
     setup_dir="$HOME/Development/GitHub/setup"
     [[ ! -d "${setup_dir}" ]] && die "${setup_dir} does not exist, quitting..."
+
+    [[ -d "${setup_dir}/.venv" ]] && source "${setup_dir}/.venv/bin/activate"
+
     pushd "${setup_dir}"
         yell "installing dependencies..."
         ansible-galaxy install -r requirements.yml
