@@ -1,0 +1,59 @@
+#!/bin/bash
+set -euxo pipefail
+
+function test-if-xcode-tools-installed() {
+  res=$(/usr/bin/xcode-select -p)
+
+  if [ "${res}" =~ " " ]; then
+    printf "err: xcode-select -p should not have spaces\n"
+    return 1
+  fi
+
+  if [ -d "${res}" ]; then
+    printf "%s is a directory!\n" "${res}"
+    [[ -x /Library/Developer/CommandLineTools/usr/bin/git ]] || return 1
+    /Library/Developer/CommandLineTools/usr/bin/git --version || return 1
+  fi
+
+  printf "cli tools ok!\n"
+}
+
+function test-if-rosetta-installed(){
+  if [ -f /Library/Apple/usr/lib/libRosettaAot.dylib ]; then
+    printf "Rosetta already installed!\n"
+    return 0
+  fi
+  return 1
+}
+
+function install-xcode-tools() {
+  /usr/bin/xcode-select --install
+}
+
+function install-rosetta() {
+  /usr/sbin/softwareupdate --install-rosetta --agree-to-license
+}
+
+function install-ansible() {
+  sudo pip3 install --upgrade pip
+  pip3 install ansible
+}
+
+function run-installation() {
+  setup_dir="$HOME/dev"
+  [[ -d "${setup_dir}" ]] || git clone git@github.com:gordian-jklapacz/mac-dev-playbook "${setup_dir}"
+  pushd "${setup_dir}"
+    ansible-galaxy install -r requirements.yml
+    ansible-playbook main.yml --ask-become-pass
+  popd
+}
+
+function main() {
+  export PATH="$HOME/Library/Python/3.8/bin:/opt/homebrew/bin:$PATH"
+  test-if-rosetta-installed || install-rosetta
+  test-if-xcode-tools-installed || install-xcode-tools
+  install-ansible
+  run-installation
+}
+
+main
