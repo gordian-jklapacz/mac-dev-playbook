@@ -1,0 +1,61 @@
+---
+- name: Update homebrew
+  homebrew:
+    name: git
+    state: latest
+    update_homebrew: true
+  tags:
+  - brew
+
+- name: python versions
+  command:
+    cmd: pyenv install {{ item }}
+    creates: "{{ pyenv_root }}/versions/{{ item }}"
+  environment:
+    CONFIGURE_OPTS: --enable-optimizations
+  register: pyenv_install_result
+  
+  failed_when: >
+    pyenv_install_result.rc != 0 and
+    pyenv_install_result.stderr_lines != ["pyenv: " + pyenv_root + "/versions/" + item + " already exists"]
+  loop: '{{ pyenv_python_versions }}'
+  tags:
+  - pyenv
+
+- name: activate python versions
+  command: pyenv global {{ pyenv_python_versions|join(" ") }}
+  tags:
+  - pyenv
+
+- name: pyenv rehash
+  command: pyenv rehash
+  tags:
+  - pyenv
+
+- name: python versions latest build requirements
+  pip:
+    name:
+    - Cython
+    - pip
+    - pip-tools
+    - setuptools
+    - virtualenv
+    state: latest
+    executable: '{{ pyenv_root }}/versions/{{ item }}/bin/pip{% if item | regex_search("^3") %}3{% endif %}'
+  environment:
+    PIP_REQUIRE_VIRTUALENV: "0"
+  loop: '{{ pyenv_python_versions }}'
+  tags:
+  - pyenv
+
+- name: virtualenv update embed wheels
+  command: "{{ pyenv_root }}/versions/{{ pyenv_python_versions[0] }}/bin/python{% if pyenv_python_versions[0] | regex_search('^3') %}3{% endif %} -m virtualenv --upgrade-embed-wheels"
+  environment:
+    PIP_REQUIRE_VIRTUALENV: "0"
+  tags:
+  - pyenv
+
+- name: pyenv rehash
+  command: pyenv rehash
+  tags:
+  - pyenv

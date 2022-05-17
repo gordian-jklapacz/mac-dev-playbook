@@ -15,7 +15,7 @@
   roles:
     - role: elliotweiser.osx-command-line-tools
     - role: gordian_jklapacz.mac.homebrew
-      tags: ['homebrew']
+      tags: ['brew']
     - role: geerlingguy.dotfiles
       when: configure_dotfiles
       tags: ['dotfiles']
@@ -28,6 +28,9 @@
     
 
   tasks:
+    - import_tasks: tasks/homebrew.yml
+      tags: ['brew']
+
     - import_tasks: tasks/python.yml
       when: configure_python
       tags: ['python']
