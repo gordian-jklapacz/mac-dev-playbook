@@ -1,12 +1,12 @@
 ---
 - name: check if .zprofile exists
   stat:
-    path: "{{ zshenv_path }}"
+    path: "{{ zprofile_path }}"
   register: zprofile_st
 
 - name: create .zprofile
   file:
-    path: "{{ zshenv_path }}"
+    path: "{{ zprofile_path }}"
     state: touch
   when: not zprofile_st.stat.exists
 

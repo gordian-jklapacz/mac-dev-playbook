@@ -23,9 +23,10 @@ homebrew_extra_paths:
   - "{{ homebrew_prefix }}/opt/libpq/bin"
   - "{{ system_python_path }}"
   - "$PATH"
+
 homebrew_openblas: "{{ homebrew_prefix }}/opt/openblas"
 brew_libffi_pkgconfig_path: "{{ brew_prefix }}/opt/libffi/lib/pkgconfig"
-macosx_deployment_target: "{{ (ansible_distribution == 'MacOxSX') | ternary(ansible_distribution_version, None) }}"
+macosx_deployment_target: "{{ (ansible_distribution == 'MacOSX') | ternary(ansible_distribution_version, None) }}"
 system_python_path: "{{ ansible_env.HOME }}/Library/Python/3.8/bin"
 zprofile_path: "{{ ansible_env.HOME }}/.zprofile"
 zshenv_path: "{{ ansible_env.HOME }}/.zshenv"

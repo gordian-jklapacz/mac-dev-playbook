@@ -80,6 +80,7 @@ homebrew_installed_packages:
   - pkg-config
   - pv
   - readline
+  - redis
   - sqlite
   - sqlite3
   - ssh-copy-id
@@ -158,5 +159,6 @@ sublime_package_control:
   - "TrailingSpaces"
   - "WordCount"
 
+#  ( git clone https://github.com/tvd0x2a/redislite --branch m1-support ../redislite-m1-support && cd ../redislite-m1-support && python setup.py install ) 
 # Glob pattern to ansible task files to run after all other tasks are finished.
 post_provision_tasks: []
