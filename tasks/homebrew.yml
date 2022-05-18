@@ -40,7 +40,6 @@
     marker: "# {mark} ANSIBLE MANAGED BLOCK python-specific-environments"
     path: "{{ zprofile_path }}"
     block: |
-      export PATH="{{ homebrew_prefix }}/bin"
       export PATH="{{ homebrew_extra_paths | join(":") }}:$PATH"
       export LDFLAGS="{{ homebrew_lib | join(" ") }}:{{ xcrun }}/lib"
       export CFLAGS="{{ homebrew_include | join(" ") }}:{{ xcrun }}/include"
@@ -50,6 +49,4 @@
       # export SDKROOT="/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk"
 
       eval "$(pyenv init --path)"
-      alias python="python3"
-      export PATH="~/.local/bin:$PATH"
 
