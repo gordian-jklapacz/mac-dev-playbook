@@ -1,8 +1,21 @@
 ---
+- set_fact:
+    vscode_config: "{{ ansible_env.HOME }}/Library/Application Support/Code/User"
+- stat:
+    path: "{{ vscode_config }}" 
+  register: vscode_settings_st
+
+- name: Create config dir
+  ansible.builtin.file:
+    path: "{{ vscode_config }}"
+    owner: "{{ lookup('env', 'USER') }}"
+    state: directory
+  when: not vscode_settings_st.stat.exists
+
 - name: Create a default VSCode configuration
   template:
     src: templates/vscode-settings.json.j2
-    dest: /Users/{{ lookup('env', 'USER') }}/Library/Application Support/Code/User/settings.json
+    dest: "{{ vscode_config }}/settings.json"
     owner: "{{ lookup('env', 'USER') }}"
     force: yes
 

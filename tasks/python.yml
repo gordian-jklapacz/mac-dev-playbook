@@ -72,6 +72,6 @@
     name: ansible
     virtualenv: "{{ ansible_script_dir }}/.venv"
     virtualenv_site_packages: yes
-    virtualenv_python: '{{ pyenv_root }}/versions/{{ item }}/bin/python{% if item | regex_search("^3") %}3{% endif %}'
+    virtualenv_command: '{{ pyenv_root }}/shims/virtualenv'
   with_items:
   - 3.10.3

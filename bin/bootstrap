@@ -1,59 +1,49 @@
 #!/bin/bash
 set -euo pipefail
 
-function test-if-xcode-tools-installed() {
-  res=$(/usr/bin/xcode-select -p)
+PATH_OVERRIDE="$HOME/Library/Python/3.8/bin:/opt/homebrew/bin:$PATH"
 
-  if [ "${res}" =~ " " ]; then
-    printf "err: xcode-select -p should not have spaces\n"
-    return 1
-  fi
+function check-xcode {
+  res=$(/usr/bin/xcode-select -p 2>&1)
+  [[ "${res}" =~ "error: unable" ]] && xcode-select --install
+  [[ "${res}" =~ " " ]] && return 111
+  [[ ! -x "${res}/usr/bin/git" ]] && return 112
 
-  if [ -d "${res}" ]; then
-    printf "%s is a directory!\n" "${res}"
-    [[ -x /Library/Developer/CommandLineTools/usr/bin/git ]] || return 1
-    /Library/Developer/CommandLineTools/usr/bin/git --version || return 1
-  fi
+  git_version="$(${res}/usr/bin/git --version 2>/dev/null)"
+  [[ -z "${git_version}" ]] && return 113
 
   printf "cli tools ok!\n"
-}
-
-function test-if-rosetta-installed(){
-  if [ -f /Library/Apple/usr/lib/libRosettaAot.dylib ]; then
-    printf "Rosetta already installed!\n"
-    return 0
-  fi
-  return 1
-}
-
-function install-xcode-tools() {
-  /usr/bin/xcode-select --install
 }
 
 function install-rosetta() {
   /usr/sbin/softwareupdate --install-rosetta --agree-to-license
 }
 
+function check-rosetta(){
+  [[ ! -f /Library/Apple/usr/lib/libRosettaAot.dylib ]] && install-rosetta
+  printf "Rosetta already installed!\n"
+}
+
 function install-ansible() {
-  sudo pip3 install --upgrade pip
-  pip3 install ansible
+  sudo /usr/bin/pip3 install --upgrade pip
+  /usr/bin/pip3 install ansible
 }
 
 function run-installation() {
   dev_dir="$HOME/Development/GitHub"
   mkdir -p "${dev_dir}"
   setup_dir="${dev_dir}/setup"
-  [[ -d "${setup_dir}" ]] || git clone git@github.com:gordian-jklapacz/mac-dev-playbook "${setup_dir}"
+  [[ -d "${setup_dir}" ]] || git clone https://github.com/gordian-jklapacz/mac-dev-playbook "${setup_dir}"
   pushd "${setup_dir}"
     ./bin/apply
   popd
 }
 
 function main() {
-  export PATH="$HOME/Library/Python/3.8/bin:/opt/homebrew/bin:$PATH"
-  test-if-rosetta-installed || install-rosetta
-  test-if-xcode-tools-installed || install-xcode-tools
-  install-ansible
+  export PATH="$PATH_OVERRIDE"
+  check-rosetta
+  check-xcode
+  [[ $(command -v ansible-playbook 2>/dev/null) ]] || install-ansible
   run-installation
 }
 

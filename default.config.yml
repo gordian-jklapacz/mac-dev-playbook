@@ -5,7 +5,7 @@ configure_python: true
 configure_dotfiles: false
 configure_terminal: true
 configure_osx: false
-configure_vscode: false
+configure_vscode: true
 configure_keys: true
 
 configure_sudoers: true

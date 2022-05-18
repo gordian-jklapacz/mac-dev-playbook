@@ -1,4 +1,10 @@
 source "{{ pyenvrc_path }}"
-alias python="python3"
-export PATH="~/.local/bin:$PATH"
+
+python() {
+	local interpreter
+	interpreter="$(pyenv which python)"
+	eval "$command $@"
+}
+
+export PATH="{{ ansible_env.HOME }}/.local/bin:$PATH"
 eval "$(starship init zsh)"
