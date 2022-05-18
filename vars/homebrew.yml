@@ -107,13 +107,20 @@ homebrew_fonts:
   - font-fira-mono
   - font-fira-mono-for-powerline
   - font-fira-sans
+xcrun:
 homebrew_lib:
   - -L{{ homebrew_prefix }}/opt/openssl@1.1/lib
+  - -L{{ homebrew_prefix }}/opt/bzip2/lib
+  - -L{{ homebrew_prefix }}/opt/readline/lib
+  - -L{{ homebrew_prefix }}/opt/xz/lib
   - -L{{ homebrew_prefix }}/opt/libpq/lib
   - -L{{ homebrew_prefix }}/opt/libyaml/lib
   - -L{{ homebrew_prefix }}/opt/zlib/lib
 homebrew_include:
   - -I{{ homebrew_prefix }}/opt/openssl@1.1/include
+  - -I{{ homebrew_prefix }}/opt/bzip2/include
+  - -I{{ homebrew_prefix }}/opt/readline/include
+  - -I{{ homebrew_prefix }}/opt/xz/include
   - -I{{ homebrew_prefix }}/opt/libpq/include
   - -I{{ homebrew_prefix }}/opt/libyaml/include
   - -I{{ homebrew_prefix }}/opt/zlib/include
@@ -121,6 +128,11 @@ homebrew_extra_paths:
   - "{{ homebrew_prefix }}/bin"
   - "{{ homebrew_prefix }}/opt/libpq/bin"
   - "{{ system_python_path }}"
+  - /usr/local/bin
+  - /usr/bin
+  - /bin
+  - /usr/sbin
+  - /sbin
 homebrew_openblas: "{{ homebrew_prefix }}/opt/openblas"
 
 macosx_deployment_target: "{{ (ansible_distribution == 'MacOSX') | ternary(ansible_distribution_version, None) }}"

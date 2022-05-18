@@ -30,14 +30,26 @@
     state: touch
   when: not zprofile_st.stat.exists
 
+- command: xcrun --show-sdk-path
+  register: xcrun_cmd
+- set_fact:
+    xcrun: "{{ xcrun_cmd.stdout }}/usr"
+
 - name: python-specific environment variables
   blockinfile:
     marker: "# {mark} ANSIBLE MANAGED BLOCK python-specific-environments"
     path: "{{ zprofile_path }}"
     block: |
+      export PATH="{{ homebrew_prefix }}/bin"
       export PATH="{{ homebrew_extra_paths | join(":") }}:$PATH"
-      export LDFLAGS="{{ homebrew_lib | join(" ") }}"
-      export CPPFLAGS="{{ homebrew_include | join(" ") }}"
+      export LDFLAGS="{{ homebrew_lib | join(" ") }}:{{ xcrun }}/lib"
+      export CFLAGS="{{ homebrew_include | join(" ") }}:{{ xcrun }}/include"
+      export CPPLAGS="{{ homebrew_include | join(" ") }}:{{ xcrun }}/include"
       export OPENBLAS="{{ homebrew_openblas }}"
       export MACOSX_DEPLOYMENT_TARGET={{ macosx_deployment_target }}
+      # export SDKROOT="/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk"
+
       eval "$(pyenv init --path)"
+      alias python="python3"
+      export PATH="~/.local/bin:$PATH"
+
