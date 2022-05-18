@@ -6,11 +6,11 @@ trap cleanup SIGINT SIGTERM ERR EXIT
 
 script_dir=$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd -P)
 
-optstring=":hvifCd:"
+optstring=":hvifCAqd:"
 
 usage() {
   cat <<EOF
-Usage: $(basename "${BASH_SOURCE[0]}") [-h] [-v] [-i] [-f] [-d directory ] -- [arg1, arg2...]
+Usage: $(basename "${BASH_SOURCE[0]}") [-h] [-v] [-i] [-f] [-C] -[A] [-q] [-d directory ] -- [arg1, arg2...]
 
 Helper utility to keep your development environment pristine and productive.
 
@@ -23,6 +23,8 @@ Available options:
         this runs: 'curl -sSL https://go.gordian.sh | bash -'
 -d  Directory to install setup script to
         default: $HOME/Development/GitHub/setup
+-A  Run all tasks
+-q  Quiet output from ansible
 EOF
   exit
 }
@@ -65,7 +67,7 @@ parse_params() {
 {% endraw %}
   directory="{{ ansible_script_dir }}"
 {% raw %}
-  ansible_callback=dense
+  ansible_callback=default
   baseargs=()
   extraargs=()
   set +u
@@ -74,12 +76,14 @@ parse_params() {
     h) usage ;;
     v)
       set -x
-      ansible_callback=default
+      ansible_callback=minimal
       ;;
     C) NO_COLOR=1 ;;
     i) install=1 ;;
     f) force=1 ;;
+    A) extraargs+=(--tags all) ;;
     d) directory="$OPTARG" ;;
+    q) ansible_callback=dense ;;
     ?*) die "Unknown option: $1" ;;
     *) break ;;
     esac
@@ -96,7 +100,7 @@ parse_params() {
   extraargs+=("$@")
 
   # check required params and arguments
-  [[ ${#extraargs[@]} -eq 0 ]] && msg "Running all tags"
+  [[ ${#extraargs[@]} -eq 0 ]] && extraargs=(--tags xip)
   [[ -z "${directory}" ]] && die "${RED}No directory provided!${NOFORMAT}"
   [[ ! -d "${directory}" ]] && die "${RED}Not a valid directory: ${directory}"
   args=("${baseargs[*]-}" "${extraargs[*]-}")
