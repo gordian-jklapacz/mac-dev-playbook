@@ -6,6 +6,7 @@ configure_dotfiles: false
 configure_terminal: true
 configure_osx: false
 configure_vscode: false
+configure_keys: true
 
 configure_sudoers: true
 sudoers_custom_config: |
@@ -90,3 +91,4 @@ post_provision_tasks: []
 neovim_path: "{{ homebrew_prefix }}/bin/nvim"
 
 dev_github_dir: "{{ ansible_env.HOME }}/Development/GitHub"
+ansible_script_dir: "{{ dev_github_dir }}/setup"

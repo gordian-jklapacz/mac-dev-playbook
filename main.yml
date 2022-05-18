@@ -12,6 +12,17 @@
       with_fileglob:
         - "{{ playbook_dir }}/config.yml"
       tags: ['always']
+    - name: setup helper CLI utility
+      template:
+        src: templates/gordian-rebuild.j2
+        dest: /usr/local/bin/gordian-sync
+        mode: 0755 # -rwxr-xr-x
+        owner: root
+        force: yes
+      become: yes
+      tags: ['xip']
+
+      
 
   roles:
     - role: elliotweiser.osx-command-line-tools
@@ -51,6 +62,10 @@
     - import_tasks: tasks/vscode.yml
       when: configure_vscode
       tags: ['vscode']
+    
+    - import_tasks: tasks/remap-keys.yml
+      when: configure_keys
+      tags: ['keys']
 
     - import_tasks: tasks/extra-packages.yml
       tags: ['extra-packages']
