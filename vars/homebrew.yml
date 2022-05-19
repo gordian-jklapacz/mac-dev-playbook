@@ -25,6 +25,7 @@ homebrew_installed_packages:
   - go
   - gpg
   - graphicsmagick
+  - hadolint
   - heroku
   - hyperfine
   - inetutils
@@ -125,6 +126,7 @@ homebrew_include:
   - -I{{ homebrew_prefix }}/opt/libyaml/include
   - -I{{ homebrew_prefix }}/opt/zlib/include
 homebrew_extra_paths:
+  - "{{ ansible_env.HOME }}/go/bin"
   - "{{ homebrew_prefix }}/bin"
   - "{{ homebrew_prefix }}/opt/libpq/bin"
   - "{{ system_python_path }}"

@@ -32,3 +32,17 @@
     user_install: false
     executable: "{{ item.executable | default(omit) }}"
   loop: "{{ gem_packages }}"
+
+- name: get go path
+  raw: go env | grep GOPATH | sed 's/GOPATH=//g' | sed 's/"//g'
+  register: go_path
+
+- set_fact:
+    go_directory: "{{ go_path.stdout | trim }}"
+
+- name: Install go binaries
+  command:
+    cmd: go install {{ item.module | default(item) }}
+    creates: "{{ go_directory }}/bin/{{ item.bin | default(item) }}"
+  loop: "{{ go_packages }}"
+
