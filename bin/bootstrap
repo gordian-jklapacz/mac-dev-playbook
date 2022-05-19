@@ -1,9 +1,18 @@
 #!/bin/bash
-set -euo pipefail
+set -uo pipefail
 
 PATH_OVERRIDE="$HOME/Library/Python/3.8/bin:/opt/homebrew/bin:$PATH"
 
+pushd () {
+    command pushd "$@" > /dev/null
+}
+
+popd () {
+    command popd "$@" > /dev/null
+}
+
 function check-xcode {
+  set -e
   res=$(/usr/bin/xcode-select -p 2>&1)
   [[ "${res}" =~ "error: unable" ]] && xcode-select --install
   [[ "${res}" =~ " " ]] && return 111
@@ -20,6 +29,7 @@ function install-rosetta() {
 }
 
 function check-rosetta(){
+  set -e
   [[ ! -f /Library/Apple/usr/lib/libRosettaAot.dylib ]] && install-rosetta
   printf "Rosetta already installed!\n"
 }
@@ -39,11 +49,17 @@ function run-installation() {
   popd
 }
 
+function check-ansible() {
+  set -e
+  ansible --version >/dev/null 2>/dev/null || echo install-ansible
+  printf "ansible ok!\n"
+}
+
 function main() {
   export PATH="$PATH_OVERRIDE"
   check-rosetta
   check-xcode
-  [[ $(command -v ansible-playbook 2>/dev/null) ]] || install-ansible
+  check-ansible
   run-installation
 }
 

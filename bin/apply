@@ -1,6 +1,14 @@
 #!/bin/bash
 set -euo pipefail
 
+pushd () {
+    command pushd "$@" > /dev/null
+}
+
+popd () {
+    command popd "$@" > /dev/null
+}
+
 function yell () 
 { 
   echo "$0: $*" >&2
@@ -17,6 +25,10 @@ function try ()
 }
 
 function main() {
+  if [[ -x /usr/local/bin/gordian-sync ]]; then
+    /usr/local/bin/gordian-sync -A
+  else
+    printf "no gordian"
     setup_dir="$HOME/Development/GitHub/setup"
     [[ ! -d "${setup_dir}" ]] && die "${setup_dir} does not exist, quitting..."
 
@@ -28,6 +40,7 @@ function main() {
         yell "applying playbook..."
         ansible-playbook main.yml --ask-become-pass
     popd
+  fi
 }
 
 main
