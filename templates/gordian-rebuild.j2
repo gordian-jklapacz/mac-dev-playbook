@@ -128,6 +128,7 @@ clean_install() {
 [[ "${force}" -eq 1 ]] && clean_install
 
 pushd "${directory}"
+git pull
 if [ "${install}" -eq 1 ]; then 
     msg "${BLUE}ansible-galaxy installing dependencies${NOFORMAT}"
     ansible-galaxy install -r requirements.yml

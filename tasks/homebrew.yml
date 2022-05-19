@@ -42,7 +42,7 @@
     block: |
       export PATH="{{ homebrew_extra_paths | join(":") }}:$PATH"
       export LDFLAGS="{{ homebrew_lib | join(" ") }}:{{ xcrun }}/lib"
-      export CPPLAGS="{{ homebrew_include | join(" ") }}:{{ xcrun }}/include"
+      export CPPFLAGS="{{ homebrew_include | join(" ") }}:{{ xcrun }}/include"
       export OPENBLAS="{{ homebrew_openblas }}"
       export MACOSX_DEPLOYMENT_TARGET={{ macosx_deployment_target }}
       # export SDKROOT="/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk"
