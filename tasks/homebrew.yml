@@ -41,8 +41,8 @@
     path: "{{ zprofile_path }}"
     block: |
       export PATH="{{ homebrew_extra_paths | join(":") }}:$PATH"
-      export LDFLAGS="{{ homebrew_lib | join(" ") }}:{{ xcrun }}/lib"
-      export CPPFLAGS="{{ homebrew_include | join(" ") }}:{{ xcrun }}/include"
+      export LDFLAGS="{{ homebrew_lib | join(" ") }} -L{{ xcrun }}/lib"
+      export CPPFLAGS="{{ homebrew_include | join(" ") }} -I{{ xcrun }}/include"
       export OPENBLAS="{{ homebrew_openblas }}"
       export MACOSX_DEPLOYMENT_TARGET={{ macosx_deployment_target }}
       # export SDKROOT="/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk"
