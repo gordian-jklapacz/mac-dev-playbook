@@ -57,7 +57,7 @@ function check-ansible() {
 
 function main() {
   export PATH="$PATH_OVERRIDE"
-  check-rosetta
+  [[ $(uname -m == 'arm64') ]] && check-rosetta
   check-xcode
   check-ansible
   run-installation
