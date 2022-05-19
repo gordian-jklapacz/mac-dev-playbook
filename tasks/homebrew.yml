@@ -8,7 +8,7 @@
     - git
     - svn
   tags:
-  - brew
+    - brew
 
 - name: Install fonts
   homebrew_cask:
@@ -48,4 +48,3 @@
       # export SDKROOT="/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk"
 
       eval "$(pyenv init --path)"
-

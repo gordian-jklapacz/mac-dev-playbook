@@ -1,7 +1,7 @@
 ---
 # Custom Terminal theme.
 - name: Get current Terminal profile.
-  command: defaults read com.apple.terminal 'Default Window Settings'
+  command: defaults read com.apple.Terminal "Default Window Settings"
   register: terminal_theme
   changed_when: false
   check_mode: false
@@ -22,7 +22,7 @@
 - name: Ensure custom Terminal profile is set as default.
   command: "{{ item }}"
   with_items:
-    - defaults write com.apple.terminal 'Default Window Settings' -string gruvbox-dark
-    - defaults write com.apple.terminal 'Startup Window Settings' -string gruvbox-dark
+    - defaults write com.apple.terminal "Default Window Settings" "gruvbox-dark"
+    - defaults write com.apple.terminal "Startup Window Settings" "gruvbox-dark"
   changed_when: false
   when: "'gruvbox-dark' not in terminal_theme.stdout"

@@ -2,7 +2,7 @@
 - set_fact:
     vscode_config: "{{ ansible_env.HOME }}/Library/Application Support/Code/User"
 - stat:
-    path: "{{ vscode_config }}" 
+    path: "{{ vscode_config }}"
   register: vscode_settings_st
 
 - name: Create config dir
@@ -19,43 +19,32 @@
     owner: "{{ lookup('env', 'USER') }}"
     force: yes
 
-- name: Install VSCode extensions
-  shell: code --install-extension {{ item }}
-  with_items:
-    - adpyke.vscode-sql-formatter
-    - alefragnani.Bookmarks
-    - alefragnani.project-manager
-    - asvetliakov.vscode-neovim
-    - christian-kohler.npm-intellisense
-    - christian-kohler.path-intellisense
-    - DaltonMenezes.aura-theme
-    - dbaeumer.vscode-eslint
-    - donjayamanne.python-environment-manager
-    - donjayamanne.python-extension-pack
-    - DotJoshJohnson.xml
-    - dprint.dprint
-    - dracula-theme.theme-dracula
-    - eamodio.gitlens
-    - EditorConfig.EditorConfig
-    - Equinusocio.vsc-community-material-theme
-    - Equinusocio.vsc-material-theme
-    - equinusocio.vsc-material-theme-icons
-    - esbenp.prettier-vscode
-    - foxundermoon.shell-format
-    - guyskk.language-cython
-    - KevinRose.vsc-python-indent
-    - ms-azuretools.vscode-docker
-    - ms-python.python
-    - ms-python.vscode-pylance
-    - njpwerner.autodocstring
-    - patrick91.python-dependencies-vscode
-    - PKief.material-icon-theme
-    - redhat.vscode-xml
-    - redhat.vscode-yaml
-    - shakram02.bash-beautify
-    - tamasfe.even-better-toml
-    - vincaslt.highlight-matching-tag
-    - VisualStudioExptTeam.vscodeintellicode
-    - wholroyd.jinja
-    - yzhang.markdown-all-in-one
-    - Boto3.typed
+- name: Install VSCode Extensions
+  block:
+    - name: Set vscode executable
+      command: which code
+      register: which_vscode
+
+    - set_fact:
+        vscode_bin: "{{ which_vscode.stdout }}"
+
+    - name: List extensions
+      command: "{{ vscode_bin }} --list-extensions"
+      register: vscode_installed_extensions
+
+    - debug:
+        var: which_vscode
+    - debug:
+        var: vscode_installed_extensions
+
+    - block:
+        - name: Install VSCode extensions
+          shell: code --install-extension {{ item }}
+          when: not item in vscode_installed_extensions.stdout_lines
+          loop: "{{ vscode_extensions }}"
+      rescue:
+        - debug:
+            msg: "{{ (ansible_failed_result.results|selectattr('failed', 'defined')|first).stderr_lines }}"
+  rescue:
+    - debug:
+        msg: Extension installation failed, likely because `code` is not resolvable

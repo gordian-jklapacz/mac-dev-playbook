@@ -1,7 +1,4 @@
 {
-	"auto_complete": false,
-	"extensions":
-	[
-		"txt"
-	]
+  "auto_complete": false,
+  "extensions": ["txt"]
 }

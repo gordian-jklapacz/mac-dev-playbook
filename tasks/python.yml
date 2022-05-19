@@ -6,51 +6,51 @@
   environment:
     CONFIGURE_OPTS: --enable-optimizations
   register: pyenv_install_result
-  
+
   failed_when: >
     pyenv_install_result.rc != 0 and
     pyenv_install_result.stderr_lines != ["pyenv: " + pyenv_root + "/versions/" + item + " already exists"]
-  loop: '{{ pyenv_python_versions }}'
+  loop: "{{ pyenv_python_versions }}"
   tags:
-  - pyenv
+    - pyenv
 
 - name: activate python versions
   command: pyenv global {{ pyenv_python_versions|join(" ") }}
   tags:
-  - pyenv
+    - pyenv
 
 - name: pyenv rehash
   command: pyenv rehash
   tags:
-  - pyenv
+    - pyenv
 
 - name: python versions latest build requirements
   pip:
     name:
-    - Cython
-    - pip
-    - pip-tools
-    - setuptools
-    - virtualenv
+      - Cython
+      - pip
+      - pip-tools
+      - setuptools
+      - virtualenv
     state: latest
     executable: '{{ pyenv_root }}/versions/{{ item }}/bin/pip{% if item | regex_search("^3") %}3{% endif %}'
   environment:
     PIP_REQUIRE_VIRTUALENV: "0"
-  loop: '{{ pyenv_python_versions }}'
+  loop: "{{ pyenv_python_versions }}"
   tags:
-  - pyenv
+    - pyenv
 
 - name: virtualenv update embed wheels
   command: "{{ pyenv_root }}/versions/{{ pyenv_python_versions[0] }}/bin/python{% if pyenv_python_versions[0] | regex_search('^3') %}3{% endif %} -m virtualenv --upgrade-embed-wheels"
   environment:
     PIP_REQUIRE_VIRTUALENV: "0"
   tags:
-  - pyenv
+    - pyenv
 
 - name: pyenv rehash
   command: pyenv rehash
   tags:
-  - pyenv
+    - pyenv
 
 - name: Ensure pyenvrc file is installed
   copy:
@@ -60,7 +60,7 @@
 
 - set_fact:
     pyenvrc_path: "{{ pyenv_root }}/.pyenvrc"
-  
+
 - name: Setup zshrc
   template:
     src: templates/.zshrc.j2
@@ -72,6 +72,6 @@
     name: ansible
     virtualenv: "{{ ansible_script_dir }}/.venv"
     virtualenv_site_packages: yes
-    virtualenv_command: '{{ pyenv_root }}/shims/virtualenv'
+    virtualenv_command: "{{ pyenv_root }}/shims/virtualenv"
   with_items:
-  - 3.10.3
+    - 3.10.3

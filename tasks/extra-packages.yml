@@ -45,4 +45,3 @@
     cmd: go install {{ item.module | default(item) }}
     creates: "{{ go_directory }}/bin/{{ item.bin | default(item) }}"
   loop: "{{ go_packages }}"
-

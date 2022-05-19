@@ -5,13 +5,19 @@
     - default.config.yml
     - vars/python.yml
     - vars/homebrew.yml
+    - vars/vscode.yml
+
+  # vars_prompt:
+  #   - name: preferred_dir
+  #     prompt: Specify development directory (default=/Users/foo/bar)
+  #     private: no
 
   pre_tasks:
     - name: Include playbook configuration.
       include_vars: "{{ item }}"
       with_fileglob:
         - "{{ playbook_dir }}/config.yml"
-      tags: ['always']
+      tags: ["always"]
     - name: setup helper CLI utility
       template:
         src: templates/gordian-rebuild.j2
@@ -20,55 +26,53 @@
         owner: root
         force: yes
       become: yes
-      tags: ['xip']
-
-      
+      tags: ["xip"]
 
   roles:
     - role: elliotweiser.osx-command-line-tools
     - role: gordian_jklapacz.mac.homebrew
-      tags: ['brew']
+      tags: ["brew"]
     - role: geerlingguy.dotfiles
       when: configure_dotfiles
-      tags: ['dotfiles']
+      tags: ["dotfiles"]
     - role: gordian_jklapacz.mac.mas
       when: mas_installed_apps or mas_installed_app_ids
-      tags: ['mas']
+      tags: ["mas"]
 
   tasks:
     - import_tasks: tasks/homebrew.yml
-      tags: ['brew']
+      tags: ["brew"]
 
     - import_tasks: tasks/python.yml
       when: configure_python
-      tags: ['python']
+      tags: ["python"]
 
     - import_tasks: tasks/sudoers.yml
       when: configure_sudoers
-      tags: ['sudoers']
+      tags: ["sudoers"]
 
     - import_tasks: tasks/terminal.yml
       when: configure_terminal
-      tags: ['terminal']
+      tags: ["terminal"]
 
     - import_tasks: tasks/dock.yml
       when: configure_dock
-      tags: ['dock']
+      tags: ["dock"]
 
     - import_tasks: tasks/osx.yml
       when: configure_osx
-      tags: ['osx']
+      tags: ["osx"]
 
     - import_tasks: tasks/vscode.yml
       when: configure_vscode
-      tags: ['vscode']
-    
+      tags: ["vscode"]
+
     - import_tasks: tasks/remap-keys.yml
       when: configure_keys
-      tags: ['keys']
+      tags: ["keys"]
 
     - import_tasks: tasks/extra-packages.yml
-      tags: ['extra-packages']
+      tags: ["extra-packages"]
 
     - block:
         - name: Run configured post-provision ansible task files.
@@ -76,4 +80,4 @@
           loop_control:
             loop_var: outer_item
           with_fileglob: "{{ post_provision_tasks|default(omit) }}"
-      tags: ['post']
+      tags: ["post"]
