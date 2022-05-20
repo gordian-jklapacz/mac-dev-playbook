@@ -2,9 +2,9 @@
 downloads: ~/.ansible-downloads/
 
 configure_python: true
-configure_dotfiles: false
+configure_dotfiles: true
 configure_terminal: true
-configure_osx: false
+configure_osx: true 
 configure_vscode: true
 configure_keys: true
 
@@ -46,15 +46,14 @@ dockitems_persist:
   - name: "Slack"
     path: "/Applications/Slack.app/"
 
-dotfiles_repo: https://github.com/geerlingguy/dotfiles.git
+dotfiles_repo: https://github.com/gordian-jklapacz/dotfiles.git
 dotfiles_repo_accept_hostkey: true
 dotfiles_repo_local_destination: ~/Development/GitHub/dotfiles
 dotfiles_files:
-  - .zshrc
+  - .gitconfig
   - .gitignore
   - .inputrc
   - .osx
-  - .vimrc
 
 # See `geerlingguy.mas` role documentation for usage instructions.
 mas_installed_apps: []
