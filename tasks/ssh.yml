@@ -1,0 +1,21 @@
+---
+- name: Check if SSH Key Vault exists
+  stat:
+    path: "{{ ssh_vault }}"
+  register: vault_st
+
+- name: Setup SSH Keys
+  block:
+  - include_vars:
+      file: "{{ ssh_vault }}"
+  - file: path={{local_home}}/.ssh state=directory mode=0700 owner={{local_user}}
+
+  - template: src={{ ssh_templates }}/HOME_.ssh_config dest={{local_home}}/.ssh/config mode=0644 owner={{local_user}} backup=yes
+
+  - shell: echo {{ssh_private_key}} |base64 --decode
+    register: ssh_private_key_decoded
+
+  - template: src={{ ssh_templates }}/HOME_.ssh_gordian-jklapacz-github dest={{local_home}}/.ssh/gordian-jklapacz-github mode=0600 owner={{local_user}}
+
+  - template: src={{ ssh_templates }}/HOME_.ssh_gordian-jklapacz-github.pub dest={{local_home}}/.ssh/gordian-jklapacz-github.pub mode=0644 owner={{local_user}}
+  when: vault_st.stat.exists

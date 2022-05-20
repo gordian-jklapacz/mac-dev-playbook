@@ -40,6 +40,15 @@
       tags: ["mas"]
 
   tasks:
+    - import_tasks: tasks/ssh.yml
+      vars:
+        config_dir: "{{ local_home }}/Dropbox/configs"
+        ssh_vault: "{{ config_dir }}/ssh_key_vault.yml"
+        ssh_templates: "{{ config_dir }}/templates"
+        local_home: "{{ lookup('env','HOME') }}"
+        local_user: "{{ lookup('env','USER') }}"
+      tags: ["ssh"]
+
     - import_tasks: tasks/homebrew.yml
       tags: ["brew"]
 
