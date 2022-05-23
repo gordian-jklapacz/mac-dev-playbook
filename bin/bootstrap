@@ -1,66 +1,69 @@
 #!/usr/bin/env bash
 set -uo pipefail
-
 PATH_OVERRIDE="$HOME/Library/Python/3.8/bin:/opt/homebrew/bin:$PATH"
 
-pushd () {
+function yell () 
+{ 
+  echo "$0: $*" >&2
+}
+
+function die () 
+{ 
+  yell "$*"; exit 111
+}
+
+function try () 
+{ 
+  "$@" || die "cannot $*" 
+}
+
+function pushd () {
     command pushd "$@" > /dev/null
 }
 
-popd () {
+function popd () {
     command popd "$@" > /dev/null
 }
 
-function check-xcode {
-  set -e
-  res=$(/usr/bin/xcode-select -p 2>&1)
-  [[ "${res}" =~ "error: unable" ]] && xcode-select --install
-  [[ "${res}" =~ " " ]] && return 111
-  [[ ! -x "${res}/usr/bin/git" ]] && return 112
-
-  git_version="$(${res}/usr/bin/git --version 2>/dev/null)"
-  [[ -z "${git_version}" ]] && return 113
-
-  printf "cli tools ok!\n"
+function rosetta(){
+  [[ "$(uname -m)" == "arm64" ]] || (yell "Non-Apple Silicon; skipping Rosetta" && return 0)
+  yell "Checking Rosetta"
+  /usr/bin/pgrep -q oahd && yell "Rosetta installed; skipping..." && return 0
+  yell "Rosetta not found... installing"
+  try /usr/sbin/softwareupdate --install-rosetta --agree-to-license
 }
 
-function install-rosetta() {
-  /usr/sbin/softwareupdate --install-rosetta --agree-to-license
-}
-
-function check-rosetta(){
-  set -e
-  [[ ! -f /Library/Apple/usr/lib/libRosettaAot.dylib ]] && install-rosetta
-  printf "Rosetta already installed!\n"
+function xcode() {
+  yell "Checking Command Line Tools"
+  if [[ "$(xcode-select -p 1>/dev/null)" -eq 2 ]]; then
+    try xcode-select --install
+  else
+    yell "Command Line Tools already installed; skipping..."
+  fi
 }
 
 function install-ansible() {
-  sudo /usr/bin/pip3 install --upgrade pip
-  /usr/bin/pip3 install ansible
+  export PATH="$PATH_OVERRIDE"
+  yell "Checking ansible"
+  [[ "$(ansible --version 1>/dev/null 2>/dev/null)" -eq 0 ]] && yell "ansible already installed; skipping..." && return 0
+  try sudo /usr/bin/pip3 install --upgrade pip
+  try /usr/bin/pip3 install ansible
 }
 
-function run-installation() {
+function install() {
+  export PATH="$PATH_OVERRIDE"
   dev_dir="$HOME/Development/GitHub"
   mkdir -p "${dev_dir}"
   setup_dir="${dev_dir}/setup"
   [[ -d "${setup_dir}" ]] || git clone https://github.com/gordian-jklapacz/mac-dev-playbook "${setup_dir}"
   pushd "${setup_dir}"
+    # die "installing!"
     ./bin/apply
   popd
 }
 
-function check-ansible() {
-  set -e
-  ansible --version >/dev/null 2>/dev/null || echo install-ansible
-  printf "ansible ok!\n"
-}
-
-function main() {
-  export PATH="$PATH_OVERRIDE"
-  [[ "$(uname -m)" -eq "arm64" ]] && check-rosetta
-  check-xcode
-  check-ansible
-  run-installation
-}
-
-main
+rosetta
+xcode
+install-ansible
+yell "--- Prerequisites Satisfied ---"
+install

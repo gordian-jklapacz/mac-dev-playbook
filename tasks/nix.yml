@@ -1,0 +1,5 @@
+---
+- name: Install Nix
+  script:
+    cmd: files/scripts/install-nix-2.8.1.sh
+    creates: /nix/var/nix/profiles/default/bin/nix
