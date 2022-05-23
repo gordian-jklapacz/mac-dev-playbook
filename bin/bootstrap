@@ -26,7 +26,7 @@ function popd () {
 }
 
 function rosetta(){
-  [[ "$(uname -m)" == "arm64" ]] || (yell "Non-Apple Silicon; skipping Rosetta" && return 0)
+  [[ "$(uname -m)" == "arm64" ]] || yell "Non-Apple Silicon; skipping Rosetta" && return 0
   yell "Checking Rosetta"
   /usr/bin/pgrep -q oahd && yell "Rosetta installed; skipping..." && return 0
   yell "Rosetta not found... installing"
@@ -57,8 +57,8 @@ function install() {
   setup_dir="${dev_dir}/setup"
   [[ -d "${setup_dir}" ]] || git clone https://github.com/gordian-jklapacz/mac-dev-playbook "${setup_dir}"
   pushd "${setup_dir}"
-    # die "installing!"
-    ./bin/apply
+    die "installing!"
+    #./bin/apply
   popd
 }
 
