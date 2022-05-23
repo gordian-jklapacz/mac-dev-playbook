@@ -16,7 +16,6 @@ sudoers_custom_config: |
 # Set to 'true' to configure the Dock via dockutil.
 configure_dock: true
 dockitems_remove:
-  - Launchpad
   - TV
   - Podcasts
   - "App Store"
@@ -31,9 +30,15 @@ dockitems_remove:
   - Mail
   - Photos
 dockitems_persist:
+  - name: Launchpad
+    path: "/System/Applications/Launchpad.app/"
+    pos: 1
+  - name: "Terminal"
+    path: "/System/Applications/Utilities/Terminal.app/"
+    pos: 2
   - name: "Visual Studio Code"
     path: "/Applications/Visual Studio Code.app/"
-    pos: 1
+    pos: 3
   - name: "Notion"
     path: "/Applications/Notion.app/"
   - name: "zoom.us"
