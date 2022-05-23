@@ -25,6 +25,10 @@ function try ()
 }
 
 function main() {
+  if [[ -f "$HOME/.ansible-vault" ]]; then
+    export ANSIBLE_VAULT_PASSWORD_FILE="$HOME/.ansible-vault"
+  fi
+
   if [[ -x /usr/local/bin/gordian-sync ]]; then
     /usr/local/bin/gordian-sync -A
   else
