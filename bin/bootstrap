@@ -25,20 +25,39 @@ function popd () {
     command popd "$@" > /dev/null
 }
 
-function rosetta(){
-  [[ "$(uname -m)" == "arm64" ]] || yell "Non-Apple Silicon; skipping Rosetta" && return 0
-  yell "Checking Rosetta"
-  /usr/bin/pgrep -q oahd && yell "Rosetta installed; skipping..." && return 0
-  yell "Rosetta not found... installing"
+function rosetta() {
+  yell "[Rosetta] Checking"
+  uname -m | grep arm64
+  arm=$?
+  if [[ "$arm" -eq 1 ]]; then
+    yell "[Rosetta]: Non-Apple Silicon; skipping..."
+    return 0
+  fi
+  /usr/bin/pgrep -q oahd && yell "[Rosetta] Rosetta installed; skipping..." && return 0
+  yell "[Rosetta] Rosetta not found... installing"
   try /usr/sbin/softwareupdate --install-rosetta --agree-to-license
 }
 
+function check-until-done() {
+  xcode_lockfile=/tmp/.com.apple.dt.CommandLineTools.installondemand.in-progress
+  exists=$(test -f $xcode_lockfile)
+  while [[ $exists -eq 1 ]] || [[ -f $xcode_lockfile ]]
+  do
+    yell "Command Line Tools installation in progress..."
+    sleep 30
+  done
+}
+
 function xcode() {
-  yell "Checking Command Line Tools"
-  if [[ "$(xcode-select -p 1>/dev/null)" -eq 2 ]]; then
-    try xcode-select --install
+  yell "[xcode] Checking"
+  xcode-select -p 1>/dev/null
+  xcode_installed=$?
+  if [[ $xcode_installed -eq 2 ]]; then
+    (try xcode-select --install &)
+    sleep 5
+    check-until-done
   else
-    yell "Command Line Tools already installed; skipping..."
+    yell "[xcode] Command Line Tools already installed; skipping..."
   fi
 }
 
@@ -64,7 +83,7 @@ function install() {
 
 rosetta
 xcode
-install-ansible
-yell "--- Prerequisites Satisfied ---"
-yell "args: $*"
-install
+#install-ansible
+#yell "--- Prerequisites Satisfied ---"
+#yell "args: $*"
+#install
