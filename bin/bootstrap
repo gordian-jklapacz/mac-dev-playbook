@@ -66,4 +66,5 @@ rosetta
 xcode
 install-ansible
 yell "--- Prerequisites Satisfied ---"
+yell "args: $*"
 install
