@@ -110,4 +110,4 @@ rosetta
 xcode
 install-ansible
 yell "--- Prerequisites Satisfied ---"
-# install
+install
