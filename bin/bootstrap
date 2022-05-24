@@ -2,88 +2,112 @@
 set -uo pipefail
 PATH_OVERRIDE="$HOME/Library/Python/3.8/bin:/opt/homebrew/bin:$PATH"
 
-function yell () 
-{ 
+function yell() {
   echo "$0: $*" >&2
 }
 
-function die () 
-{ 
-  yell "$*"; exit 111
+function die() {
+  yell "$*"
+  exit 111
 }
 
-function try () 
-{ 
-  "$@" || die "cannot $*" 
+function try() {
+  "$@" || die "cannot $*"
 }
 
-function pushd () {
-    command pushd "$@" > /dev/null
+function pushd() {
+  command pushd "$@" >/dev/null
 }
 
-function popd () {
-    command popd "$@" > /dev/null
+function popd() {
+  command popd "$@" >/dev/null
 }
 
 function rosetta() {
-  yell "[Rosetta] Checking"
+  yell "[Rosetta] Checking..."
   uname -m | grep arm64
   arm=$?
   if [[ "$arm" -eq 1 ]]; then
-    yell "[Rosetta]: Non-Apple Silicon; skipping..."
+    yell "[Rosetta] Non-Apple Silicon; skipping..."
     return 0
   fi
-  /usr/bin/pgrep -q oahd && yell "[Rosetta] Rosetta installed; skipping..." && return 0
-  yell "[Rosetta] Rosetta not found... installing"
+  /usr/bin/pgrep -q oahd && yell "[Rosetta] requirement satisfied; skipping..." && return 0
+  yell "[Rosetta] requirement not satisfied; installing..."
   try /usr/sbin/softwareupdate --install-rosetta --agree-to-license
 }
 
 function check-until-done() {
   xcode_lockfile=/tmp/.com.apple.dt.CommandLineTools.installondemand.in-progress
   exists=$(test -f $xcode_lockfile)
-  while [[ $exists -eq 1 ]] || [[ -f $xcode_lockfile ]]
-  do
-    yell "Command Line Tools installation in progress..."
+  while [[ $exists -eq 1 ]] || [[ -f $xcode_lockfile ]]; do
+    yell "[xcode] Command Line Tools installation in progress..."
     sleep 30
   done
 }
 
 function xcode() {
-  yell "[xcode] Checking"
+  yell "[xcode] Checking..."
   xcode-select -p 1>/dev/null
   xcode_installed=$?
   if [[ $xcode_installed -eq 2 ]]; then
     (try xcode-select --install &)
+    yell "[xcode] requirement not satisfied; installing..."
     sleep 5
     check-until-done
   else
-    yell "[xcode] Command Line Tools already installed; skipping..."
+    yell "[xcode] requirement satisfied; skipping..."
   fi
 }
 
 function install-ansible() {
-  export PATH="$PATH_OVERRIDE"
-  yell "Checking ansible"
-  [[ "$(ansible --version 1>/dev/null 2>/dev/null)" -eq 0 ]] && yell "ansible already installed; skipping..." && return 0
+  export PATH="$PATH_OVERRIDE:$PATH"
+  yell "[ansible] Checking..."
+  ansible --version 1>/dev/null 2>/dev/null
+  ansible_installed=$?
+  if [[ $ansible_installed -eq 0 ]]; then
+    yell "[ansible] ansible already installed; skipping..."
+    return 0
+  fi
   try sudo /usr/bin/pip3 install --upgrade pip
   try /usr/bin/pip3 install ansible
 }
 
 function install() {
-  export PATH="$PATH_OVERRIDE"
+  export PATH="$PATH_OVERRIDE:$PATH"
   dev_dir="$HOME/Development/GitHub"
-  mkdir -p "${dev_dir}"
   setup_dir="${dev_dir}/setup"
-  [[ -d "${setup_dir}" ]] || git clone https://github.com/gordian-jklapacz/mac-dev-playbook "${setup_dir}"
+
+  yell "[install] cloning setup repo: (target=${setup_dir})"
+
+  mkdir -p "${dev_dir}"
+
+  if [[ ! -d "${setup_dir}" ]]; then
+    git clone -q https://github.com/gordian-jklapacz/mac-dev-playbook "${setup_dir}"
+  fi
+
+  venv_activate="${setup_dir}/.venv/bin/activate"
+
   pushd "${setup_dir}"
-    die "installing!"
-    #./bin/apply
+  if [[ -f "${venv_activate}" ]]; then
+    yell "[install] activating virtual environment"
+    source "${venv_activate}"
+  fi
+
+  read -s -p "Enter encryption key: (default: '')\n" x
+  if [[ -n "$x" ]]; then
+    printf "$x\n" >"$HOME/.ansible-vault"
+    export ANSIBLE_VAULT_PASSWORD_FILE="$HOME/.ansible-vault"
+    yell "[install] ansible-vault encryption key saved"
+  fi
+
+  yell "[install] installing ansible dependencies"
+  ansible-galaxy install -r requirements.yml
+  ansible-playbook main.yml --ask-become-pass
   popd
 }
 
 rosetta
 xcode
-#install-ansible
-#yell "--- Prerequisites Satisfied ---"
-#yell "args: $*"
-#install
+install-ansible
+yell "--- Prerequisites Satisfied ---"
+# install
