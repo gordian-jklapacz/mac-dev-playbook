@@ -90,16 +90,17 @@ homebrew_taps:
 homebrew_cask_accept_external_apps: true
 homebrew_cask_appdir: /Applications
 homebrew_cask_apps:
+  - dropbox
   - chromedriver
   - docker
-  - dropbox
   - firefox
   - google-chrome
+  - cleanshot
   - licecap
   - moom
   - notion
   - postman
-  - sequel-ace
+  - postico
   - slack
   - visual-studio-code
   - zoom
