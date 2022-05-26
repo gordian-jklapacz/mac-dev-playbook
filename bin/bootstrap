@@ -19,19 +19,25 @@
     command -v "$1" >/dev/null 2>&1 ||
       oops "you do not have '$1' installed, which I need to $2"
   }
-  version=0.0.4
 
   case "$(uname -s).$(uname -m)" in
   Darwin.x86_64)
-    path=xip-$version-darwin-amd64.tar.gz
-    system=x86_64-darwin
+    system=darwin-amd64
     ;;
   Darwin.arm64 | Darwin.aarch64)
-    path=xip-$version-darwin-arm64.tar.gz
-    system=aarch64-darwin
+    system=darwin-arm64
     ;;
   *) oops "sorry, there is no binary distribution of Nix for your platform" ;;
   esac
+
+  url=$(curl -s https://api.github.com/repos/gordian-jklapacz/xip/releases/latest |
+    grep "browser" |
+    cut -d : -f 2,3 |
+    tr -d \" |
+    grep $system |
+    grep -v md5 |
+    awk '{$1=$1};1')
+  path=$(echo "$url" | cut -d / -f 9)
 
   # Use this command-line option to fetch the tarballs using nar-serve or Cachix
   if [ "${1:-}" = "--tarball-url-prefix" ]; then
@@ -40,8 +46,6 @@
     fi
     url=${2}/${path}
     shift 2
-  else
-    url=https://github.com/gordian-jklapacz/xip/releases/download/$version/$path
   fi
 
   tarball=$tmpDir/$path
@@ -59,7 +63,7 @@
     oops "you don't have wget or curl installed, which I need to download the binary tarball"
   fi
 
-  echo "downloading Xip 0.0.3 binary tarball for $system from '$url' to '$tmpDir'..."
+  echo "downloading $path binary tarball for $system from '$url' to '$tmpDir'..."
   fetch "$url" "$tarball" || oops "failed to download '$url'"
 
   unpack=$tmpDir/unpack
