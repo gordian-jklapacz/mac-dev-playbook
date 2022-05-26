@@ -58,7 +58,6 @@
     oops "you don't have wget or curl installed, which I need to download the binary tarball"
   fi
 
-<<<<<<< HEAD
   echo "downloading Xip 0.0.3 binary tarball for $system from '$url' to '$tmpDir'..."
   fetch "$url" "$tarball" || oops "failed to download '$url'"
 
@@ -67,54 +66,6 @@
   tar -xJf "$tarball" -C "$unpack" || oops "failed to unpack '$url'"
 
   script=$(echo "$unpack"/xip)
-=======
-function install-ansible() {
-  export PATH="$PATH_OVERRIDE:$PATH"
-  yell "[ansible] Checking..."
-  ansible --version 1>/dev/null 2>/dev/null
-  ansible_installed=$?
-  if [[ $ansible_installed -eq 0 ]]; then
-    yell "[ansible] ansible already installed; skipping..."
-    return 0
-  fi
-  try sudo /usr/bin/pip3 install --upgrade pip
-  try /usr/bin/pip3 install ansible
-}
-
-function install() {
-  export PATH="$PATH_OVERRIDE:$PATH"
-  dev_dir="$HOME/Development/GitHub"
-  setup_dir="${dev_dir}/setup"
-
-  yell "[install] cloning setup repo: (target=${setup_dir})"
-
-  mkdir -p "${dev_dir}"
-
-  if [[ ! -d "${setup_dir}" ]]; then
-    git clone -q https://github.com/gordian-jklapacz/mac-dev-playbook "${setup_dir}"
-  fi
-
-  venv_activate="${setup_dir}/.venv/bin/activate"
-
-  pushd "${setup_dir}"
-  if [[ -f "${venv_activate}" ]]; then
-    yell "[install] activating virtual environment"
-    source "${venv_activate}"
-  fi
-
-  read -s -p "Enter encryption key: (default: '')\n" x
-  if [[ -n "$x" ]]; then
-    printf "$x\n" >"$HOME/.ansible-vault"
-    export ANSIBLE_VAULT_PASSWORD_FILE="$HOME/.ansible-vault"
-    yell "[install] ansible-vault encryption key saved"
-  fi
-
-  yell "[install] installing ansible dependencies"
-  ansible-galaxy install -r requirements.yml
-  ansible-playbook main.yml --ask-become-pass
-  popd
-}
->>>>>>> 824ed2bf0fa56df7cda21bbb918023f1f4e78aa8
 
   [ -e "$script" ] || oops "installation script is missing from the binary tarball!"
   export INVOKED_FROM_INSTALL_IN=1
