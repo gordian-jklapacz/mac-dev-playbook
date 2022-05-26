@@ -1,69 +1,77 @@
-#!/usr/bin/env bash
-set -uo pipefail
-PATH_OVERRIDE="$HOME/Library/Python/3.8/bin:/opt/homebrew/bin:$PATH"
+#!/bin/sh
 
-function yell () 
-{ 
-  echo "$0: $*" >&2
-}
+{ # Prevent execution if this script was only partially downloaded
+  oops() {
+    echo "$0:" "$@" >&2
+    exit 1
+  }
 
-function die () 
-{ 
-  yell "$*"; exit 111
-}
+  umask 0022
 
-function try () 
-{ 
-  "$@" || die "cannot $*" 
-}
+  tmpDir="$(mktemp -d -t xip-binary-tarball-unpack.XXXXXXXXXX ||
+    oops "Can't create temporary directory for downloading the Xip binary tarball")"
+  cleanup() {
+    echo rm -rf "$tmpDir"
+  }
+  trap cleanup EXIT INT QUIT TERM
 
-function pushd () {
-    command pushd "$@" > /dev/null
-}
+  require_util() {
+    command -v "$1" >/dev/null 2>&1 ||
+      oops "you do not have '$1' installed, which I need to $2"
+  }
 
-function popd () {
-    command popd "$@" > /dev/null
-}
+  case "$(uname -s).$(uname -m)" in
+  Darwin.x86_64)
+    path=xip-0.0.3-darwin-amd64.tar.gz
+    system=x86_64-darwin
+    ;;
+  Darwin.arm64 | Darwin.aarch64)
+    path=xip-0.0.3-darwin-arm64.tar.gz
+    system=aarch64-darwin
+    ;;
+  *) oops "sorry, there is no binary distribution of Nix for your platform" ;;
+  esac
 
-function rosetta(){
-  [[ "$(uname -m)" == "arm64" ]] || (yell "Non-Apple Silicon; skipping Rosetta" && return 0)
-  yell "Checking Rosetta"
-  /usr/bin/pgrep -q oahd && yell "Rosetta installed; skipping..." && return 0
-  yell "Rosetta not found... installing"
-  try /usr/sbin/softwareupdate --install-rosetta --agree-to-license
-}
-
-function xcode() {
-  yell "Checking Command Line Tools"
-  if [[ "$(xcode-select -p 1>/dev/null)" -eq 2 ]]; then
-    try xcode-select --install
+  # Use this command-line option to fetch the tarballs using nar-serve or Cachix
+  if [ "${1:-}" = "--tarball-url-prefix" ]; then
+    if [ -z "${2:-}" ]; then
+      oops "missing argument for --tarball-url-prefix"
+    fi
+    url=${2}/${path}
+    shift 2
   else
-    yell "Command Line Tools already installed; skipping..."
+    url=https://github.com/gordian-jklapacz/xip/releases/download/0.0.3/$path
   fi
-}
 
-function install-ansible() {
-  export PATH="$PATH_OVERRIDE"
-  yell "Checking ansible"
-  [[ "$(ansible --version 1>/dev/null 2>/dev/null)" -eq 0 ]] && yell "ansible already installed; skipping..." && return 0
-  try sudo /usr/bin/pip3 install --upgrade pip
-  try /usr/bin/pip3 install ansible
-}
+  tarball=$tmpDir/$path
 
-function install() {
-  export PATH="$PATH_OVERRIDE"
-  dev_dir="$HOME/Development/GitHub"
-  mkdir -p "${dev_dir}"
-  setup_dir="${dev_dir}/setup"
-  [[ -d "${setup_dir}" ]] || git clone https://github.com/gordian-jklapacz/mac-dev-playbook "${setup_dir}"
-  pushd "${setup_dir}"
-    # die "installing!"
-    ./bin/apply
-  popd
-}
+  require_util tar "unpack the binary tarball"
+  if [ "$(uname -s)" != "Darwin" ]; then
+    require_util xz "unpack the binary tarball"
+  fi
 
-rosetta
-xcode
-install-ansible
-yell "--- Prerequisites Satisfied ---"
-install
+  if command -v curl >/dev/null 2>&1; then
+    fetch() { curl --fail -L "$1" -o "$2"; }
+  elif command -v wget >/dev/null 2>&1; then
+    fetch() { wget "$1" -O "$2"; }
+  else
+    oops "you don't have wget or curl installed, which I need to download the binary tarball"
+  fi
+
+  echo "downloading Xip 0.0.3 binary tarball for $system from '$url' to '$tmpDir'..."
+  fetch "$url" "$tarball" || oops "failed to download '$url'"
+
+  unpack=$tmpDir/unpack
+  mkdir -p "$unpack"
+  tar -xJf "$tarball" -C "$unpack" || oops "failed to unpack '$url'"
+
+  script=$(echo "$unpack"/xip)
+
+  [ -e "$script" ] || oops "installation script is missing from the binary tarball!"
+  export INVOKED_FROM_INSTALL_IN=1
+  if [[ -n "$@" ]]; then
+    "$script" check rosetta "$@"
+  else
+    "$script" "$@"
+  fi
+} # End of wrapping
