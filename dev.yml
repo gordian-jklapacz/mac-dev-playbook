@@ -1,0 +1,18 @@
+---
+- hosts: all
+  vars:
+    repos:
+    - { repo: git@github.com:gordiansoftware/corev1.git, name: corev1 }
+    - { repo: git@github.com:gordiansoftware/centaur-proxy.git, name: centaur-proxy }
+    - { repo: git@github.com:gordiansoftware/corev2.git, name: corev2 }
+    - { repo: git@github.com:gordiansoftware/content.git, name: content }
+  tasks:
+    - name: Check if SSH/git is setup
+      ansible.builtin.shell:
+        cmd: ssh -T git@github.com 2>&1 | grep "successfully authenticated" && touch /tmp/.ssh-working
+        creates: /tmp/.ssh-working
+      register: ssh_t
+    - name: Pull
+      include_tasks: tasks/git.yml
+      when: not ssh_t.failed
+      loop: "{{ repos }}"

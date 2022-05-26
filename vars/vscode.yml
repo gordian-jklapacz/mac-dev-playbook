@@ -38,3 +38,4 @@ vscode_extensions:
   - wholroyd.jinja
   - yzhang.markdown-all-in-one
   - Boto3typed.boto3-ide
+  - golang.go

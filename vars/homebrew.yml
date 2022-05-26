@@ -1,12 +1,9 @@
 ---
 homebrew_installed_packages:
-  - autoconf
   - autojump
-  - automake
   - awscli
   - bash-completion
   - cloc
-  - coreutils
   - cowsay
   - doxygen
   - enchant
@@ -14,12 +11,12 @@ homebrew_installed_packages:
   - fd
   - fdupes
   - ffmpeg
+  - flyctl
   - freetype
   - fswatch
   - gdbm
   - gettext
   - gifsicle
-  - git
   - git-delta
   - github/gh/gh
   - go
@@ -28,19 +25,11 @@ homebrew_installed_packages:
   - hadolint
   - heroku
   - hyperfine
-  - inetutils
   - iperf
   - jpeg
   - jpegoptim
   - jq
   - lesspipe
-  - libevent
-  - libffi
-  - libmemcached
-  - libpng
-  - { name: libpq, install_options: build-from-source }
-  - libtool
-  - libyaml
   - mcrypt
   - memcached
   - myrepos
@@ -50,37 +39,37 @@ homebrew_installed_packages:
   - nmap
   - node
   - nvm
-  - openblas
-  - openssl
-  - ossp-uuid
   - pandoc
   - parallel
-  - pkg-config
   - postgresql
   - pre-commit
   - pv
   - pwgen
   - pyenv
   - qpdf
-  - readline
   - redis
   - rsync
   - sd
   - shellcheck
   - sqlite
   - sqlite3
+  - sqlite-utils
   - ssh-copy-id
   - starship
   - tcl-tk
-  - tree
-  - watch
   - watchman
-  - wget
   - wrk
-  - xz
-  - zlib
   - zsh-completions
   - zsh-history-substring-search
+  - bat
+  - ripgrep
+  - fzf
+  - tmux
+  - pre-commit
+  - exa
+fzf_postinstall: |
+  "{{ homebrew_prefix }}/opt/fzf/install"
+
 
 homebrew_taps:
   - heroku/brew
@@ -109,6 +98,7 @@ homebrew_fonts:
   - font-fira-mono
   - font-fira-mono-for-powerline
   - font-fira-sans
+  - font-hack-nerd-font
 xcrun:
 homebrew_lib:
   - -L{{ homebrew_prefix }}/opt/openssl@1.1/lib
