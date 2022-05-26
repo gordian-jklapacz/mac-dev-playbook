@@ -61,6 +61,7 @@ dotfiles_files:
   - .gitignore
   - .inputrc
   - .osx
+  - .aliases
 
 # See `geerlingguy.mas` role documentation for usage instructions.
 mas_installed_apps: []
@@ -89,6 +90,18 @@ go_packages:
     bin: shfmt
   - module: github.com/rhysd/actionlint/cmd/actionlint@latest
     bin: actionlint
+  - module: github.com/cweill/gotests/gotests@latest
+    bin: gotests
+  - module: github.com/fatih/gomodifytags@latest
+    bin: gomodifytags
+  - module: github.com/josharian/impl@latest
+    bin: impl
+  - module: github.com/haya14busa/goplay/cmd/goplay@latest
+    bin: goplay
+  - module: honnef.co/go/tools/cmd/staticcheck@latest
+    bin: staticcheck
+  - module: golang.org/x/tools/gopls@latest
+    bin: gopls
 # - name: webpack
 #   state: present # present/absent/latest, default: present
 #   version: "^2.6" # default: N/A

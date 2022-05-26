@@ -1,0 +1,5 @@
+---
+- name: Pull {{ item.repo }}
+  ansible.builtin.shell:
+    cmd: git clone {{ item.repo }} {{ ansible_env.HOME }}/Development/GitHub/{{ item.name }}
+    creates: "{{ ansible_env.HOME }}/Development/GitHub/{{ item.name }}/.git"
