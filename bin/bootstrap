@@ -11,7 +11,7 @@
   tmpDir="$(mktemp -d -t xip-binary-tarball-unpack.XXXXXXXXXX ||
     oops "Can't create temporary directory for downloading the Xip binary tarball")"
   cleanup() {
-    echo rm -rf "$tmpDir"
+    rm -rf "$tmpDir"
   }
   trap cleanup EXIT INT QUIT TERM
 
@@ -69,8 +69,8 @@
 
   [ -e "$script" ] || oops "installation script is missing from the binary tarball!"
   export INVOKED_FROM_INSTALL_IN=1
-  if [[ -n "$@" ]]; then
-    "$script" check rosetta "$@"
+  if [ -n "$@" ]; then
+    "$script" check all
   else
     "$script" "$@"
   fi
