@@ -19,14 +19,15 @@
     command -v "$1" >/dev/null 2>&1 ||
       oops "you do not have '$1' installed, which I need to $2"
   }
+  version=0.0.4
 
   case "$(uname -s).$(uname -m)" in
   Darwin.x86_64)
-    path=xip-0.0.3-darwin-amd64.tar.gz
+    path=xip-$version-darwin-amd64.tar.gz
     system=x86_64-darwin
     ;;
   Darwin.arm64 | Darwin.aarch64)
-    path=xip-0.0.3-darwin-arm64.tar.gz
+    path=xip-$version-darwin-arm64.tar.gz
     system=aarch64-darwin
     ;;
   *) oops "sorry, there is no binary distribution of Nix for your platform" ;;
@@ -40,7 +41,7 @@
     url=${2}/${path}
     shift 2
   else
-    url=https://github.com/gordian-jklapacz/xip/releases/download/0.0.3/$path
+    url=https://github.com/gordian-jklapacz/xip/releases/download/$version/$path
   fi
 
   tarball=$tmpDir/$path
@@ -71,6 +72,7 @@
   export INVOKED_FROM_INSTALL_IN=1
   if [ -n "$@" ]; then
     "$script" check all
+    "$script" setup
   else
     "$script" "$@"
   fi
