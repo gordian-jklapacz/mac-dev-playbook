@@ -39,3 +39,6 @@ vscode_extensions:
   - yzhang.markdown-all-in-one
   - Boto3typed.boto3-ide
   - golang.go
+  - samuelcolvin.jinjahtml
+
+font: Hack Nerd Font Mono

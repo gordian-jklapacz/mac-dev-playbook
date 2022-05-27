@@ -1,7 +1,57 @@
 {
-    "editor.fontFamily": "Fira Code Retina",
-    "editor.fontLigatures": true,
-    "terminal.integrated.fontFamily": "Fira Code Retina",
-    "vscode-neovim.neovimExecutablePaths.darwin": "{{ neovim_path }}",
-    "workbench.colorTheme": "Dracula",
+  "editor.fontFamily": "{{ font }}",
+  "editor.fontLigatures": true,
+  "terminal.integrated.fontFamily": "{{ font }}",
+  "vscode-neovim.neovimExecutablePaths.darwin": "{{ neovim_path }}",
+  "workbench.colorTheme": "Dracula",
+  "workbench.iconTheme": "city-lights-icons-vsc-light",
+  "files.exclude": {
+    "**/.git": true,
+    "**/.svn": true,
+    "**/.hg": true,
+    "**/CVS": true,
+    "**/.DS_Store": true,
+    "**/Thumbs.db": true,
+    "**/*.pyc": true,
+    "**/*.pytest_cache": true,
+    "**/__pycache__": true
+  },
+  "files.watcherExclude": {
+    "**/.git": true,
+    "**/.svn": true,
+    "**/.hg": true,
+    "**/CVS": true,
+    "**/.DS_Store": true,
+    "**/Thumbs.db": true,
+    "**/*.pyc": true,
+    "**/*.pytest_cache": true,
+    "**/__pycache__": true
+  },
+  // ------------- FORMATTING -----------------
+  "editor.formatOnSave": true,
+  "[go]": {
+    "editor.defaultFormatter": "golang.go"
+  },
+  "[json]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[jsonc]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[shellscript]": {
+    "editor.defaultFormatter": "foxundermoon.shell-format"
+  },
+  "[yaml]": {
+    "editor.defaultFormatter": "dprint.dprint"
+  },
+  // ------------- JSON SCHEMAS -----------------
+  "yaml.schemas": {
+    "https://json.schemastore.org/github-workflow.json": "**/.github/workflows/*",
+    "https://raw.githubusercontent.com/ansible/schemas/main/f/ansible.json#/$defs/playbook": "**/playbooks/*",
+    "https://raw.githubusercontent.com/ansible/schemas/main/f/ansible.json#/$defs/tasks": "**/tasks/*"
+  },
+  "files.associations": {
+    "*.json.j2": "jinja-json"
+  }
+  "projectManager.git.baseFolders": ["{{ git_base_path }}"]
 }

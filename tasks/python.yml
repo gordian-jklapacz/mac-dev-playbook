@@ -75,3 +75,13 @@
     virtualenv_command: "{{ pyenv_root }}/shims/virtualenv"
   with_items:
     - 3.10.3
+
+- name: Install Pipx
+  pip:
+    name: pipx
+    executable: "{{ pyenv_root }}/versions/3.9.11/bin/pip"
+
+- name: Startup Config
+  copy:
+    src: files/.pystartup
+    dest: "{{ ansible_env.HOME }}/.pystartup"

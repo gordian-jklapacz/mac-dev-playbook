@@ -4,9 +4,16 @@ export PATH="{{ ansible_env.HOME }}/.local/bin:$PATH"
 fpath=("{{ homebrew_prefix }}/share/zsh/site-functions" $fpath)
 autoload -Uz compinit
 compinit
+autoload -U bashcompinit
+bashcompinit
 
 eval "$(starship init zsh)"
 eval "$(direnv hook zsh)" 
+eval "$(register-python-argcomplete pipx)"
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 [ -f ~/.aliases ] && source ~/.aliases
+[ -f ~/.pystartup ] && export PYTHONSTARTUP="{{ ansible_env.HOME }}/.pystartup"
+
+# After fzf or it conflicts
+eval "$(atuin init zsh)"

@@ -45,3 +45,9 @@
     cmd: go install {{ item.module | default(item) }}
     creates: "{{ go_directory }}/bin/{{ item.bin | default(item) }}"
   loop: "{{ go_packages }}"
+
+- name: Install pipx programs
+  community.general.pipx:
+    name: "{{ item }}"
+    executable: "{{ pyenv_root }}/versions/3.9.11/bin/pipx"
+  loop: "{{ pipx_packages }}"

@@ -67,9 +67,9 @@ homebrew_installed_packages:
   - tmux
   - pre-commit
   - exa
+  - atuin
 fzf_postinstall: |
   "{{ homebrew_prefix }}/opt/fzf/install"
-
 
 homebrew_taps:
   - heroku/brew
