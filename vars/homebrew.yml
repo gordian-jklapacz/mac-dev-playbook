@@ -68,6 +68,7 @@ homebrew_installed_packages:
   - pre-commit
   - exa
   - atuin
+  - lastpass-cli
 fzf_postinstall: |
   "{{ homebrew_prefix }}/opt/fzf/install"
 
@@ -93,6 +94,7 @@ homebrew_cask_apps:
   - slack
   - visual-studio-code
   - zoom
+  - lastpass
 homebrew_fonts:
   - font-fira-code
   - font-fira-mono

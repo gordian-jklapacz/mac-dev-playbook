@@ -16,4 +16,5 @@ eval "$(register-python-argcomplete pipx)"
 [ -f ~/.pystartup ] && export PYTHONSTARTUP="{{ ansible_env.HOME }}/.pystartup"
 
 # After fzf or it conflicts
-eval "$(atuin init zsh)"
+ATUIN_NOBIND=t eval "$(atuin init zsh)"
+bindkey '^r' _atuin_search_widget
