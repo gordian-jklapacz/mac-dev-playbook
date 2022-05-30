@@ -122,3 +122,4 @@ neovim_path: "{{ homebrew_prefix }}/bin/nvim"
 
 dev_github_dir: "{{ ansible_env.HOME }}/Development/GitHub"
 ansible_script_dir: "{{ dev_github_dir }}/setup"
+git_base_path: "{{ dev_github_dir }}"
