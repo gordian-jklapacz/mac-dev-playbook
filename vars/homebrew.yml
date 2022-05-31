@@ -94,7 +94,6 @@ homebrew_cask_apps:
   - postico
   - slack
   - visual-studio-code
-  - zoom
   - lastpass
 homebrew_fonts:
   - font-fira-code
