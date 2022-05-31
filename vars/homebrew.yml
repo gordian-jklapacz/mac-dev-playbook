@@ -69,6 +69,7 @@ homebrew_installed_packages:
   - exa
   - atuin
   - lastpass-cli
+  - direnv
 fzf_postinstall: |
   "{{ homebrew_prefix }}/opt/fzf/install"
 
