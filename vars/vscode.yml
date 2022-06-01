@@ -42,7 +42,7 @@ vscode_extensions:
   - wholroyd.jinja
   - Yummygum.city-lights-icon-vsc
   - yzhang.markdown-all-in-one
-vim: false
-vim_extension: asvetliakov.vscode-neovim
+vscode_vim: false
+vscode_vim_extension: asvetliakov.vscode-neovim
 
 font: Hack Nerd Font Mono
