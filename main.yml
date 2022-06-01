@@ -82,7 +82,7 @@
 
     - import_tasks: tasks/extra-packages.yml
       tags: ["extra-packages"]
-    
+
     - import_tasks: tasks/nix.yml
       tags: ["nix"]
       when: configure_nix

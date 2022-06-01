@@ -1,0 +1,19 @@
+---
+- hosts: all
+
+  tasks:
+    - name: Download latest Xip
+      get_url:
+        url: https://gordian-onboarding.s3.us-east-1.amazonaws.com/latest/xip-0.1.0-darwin-arm64.tar.gz
+        dest: /tmp/xip.tgz
+    - name: Extract
+      ansible.builtin.unarchive:
+        src: /tmp/xip.tgz
+        dest: "{{ ansible_env.HOME }}/.local/bin"
+        include: xip
+    - name: Link
+      file:
+        src: "{{ ansible_env.HOME }}/.local/bin/xip"
+        dest: /usr/local/bin/x
+        state: link
+      become: true

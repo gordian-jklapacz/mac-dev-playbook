@@ -41,5 +41,7 @@ vscode_extensions:
   - golang.go
   - samuelcolvin.jinjahtml
   - bbenoist.nix
+  - jdinhlife.gruvbox
+  - yummygum.city-lights-icon-vsc
 
 font: Hack Nerd Font Mono
