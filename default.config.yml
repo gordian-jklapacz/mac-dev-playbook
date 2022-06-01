@@ -49,7 +49,6 @@ dotfiles_files:
   - .gitconfig
   - .gitignore
   - .inputrc
-  - .osx
   - .aliases
 
 # See `geerlingguy.mas` role documentation for usage instructions.
