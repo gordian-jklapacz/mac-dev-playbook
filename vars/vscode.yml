@@ -1,9 +1,10 @@
 ---
 vscode_extensions:
-  - redhat.ansible
   - adpyke.vscode-sql-formatter
   - alefragnani.Bookmarks
   - alefragnani.project-manager
+  - bbenoist.Nix
+  - Boto3typed.boto3-ide
   - christian-kohler.npm-intellisense
   - christian-kohler.path-intellisense
   - DaltonMenezes.aura-theme
@@ -20,7 +21,9 @@ vscode_extensions:
   - equinusocio.vsc-material-theme-icons
   - esbenp.prettier-vscode
   - foxundermoon.shell-format
+  - golang.go
   - guyskk.language-cython
+  - jdinhlife.gruvbox
   - KevinRose.vsc-python-indent
   - ms-azuretools.vscode-docker
   - ms-python.python
@@ -28,20 +31,17 @@ vscode_extensions:
   - njpwerner.autodocstring
   - patrick91.python-dependencies-vscode
   - PKief.material-icon-theme
+  - redhat.ansible
   - redhat.vscode-xml
   - redhat.vscode-yaml
+  - samuelcolvin.jinjahtml
   - shakram02.bash-beautify
   - tamasfe.even-better-toml
   - vincaslt.highlight-matching-tag
   - VisualStudioExptTeam.vscodeintellicode
   - wholroyd.jinja
+  - Yummygum.city-lights-icon-vsc
   - yzhang.markdown-all-in-one
-  - Boto3typed.boto3-ide
-  - golang.go
-  - samuelcolvin.jinjahtml
-  - bbenoist.nix
-  - jdinhlife.gruvbox
-  - yummygum.city-lights-icon-vsc
 vim: false
 vim_extension: asvetliakov.vscode-neovim
 

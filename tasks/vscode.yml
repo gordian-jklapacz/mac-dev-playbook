@@ -1,7 +1,9 @@
 ---
-- set_fact:
+- name: Set VSCode config path
+  set_fact:
     vscode_config: "{{ ansible_env.HOME }}/Library/Application Support/Code/User"
-- stat:
+- name: Check if VSCode config path exists
+  stat:
     path: "{{ vscode_config }}"
   register: vscode_settings_st
 
@@ -23,25 +25,23 @@
   block:
     - name: Set vscode executable
       command: which code
-      register: which_vscode
-
-    - set_fact:
-        vscode_bin: "{{ which_vscode.stdout }}"
+      register: vscode_exe
 
     - name: List extensions
-      command: "{{ vscode_bin }} --list-extensions"
+      command: "{{ vscode_exe.stdout }} --list-extensions"
       register: vscode_installed_extensions
 
     - block:
         - name: Install VSCode extensions
-          shell: code --install-extension {{ item }}
+          shell: "{{ vscode_exe.stdout }} --install-extension {{ item }}"
           when: not item in vscode_installed_extensions.stdout_lines
           loop: "{{ vscode_extensions }}"
-        - name: Install NVim extension
-          shell: code --install-extension {{ vim_extension }}
+        - name: Install vim extension
+          shell: "{{ vscode_exe.stdout }} --install-extension {{ vim_extension }}"
           when: vim and not vim_extension in vscode_installed_extensions.stdout_lines
       rescue:
-        - debug:
+        - name: Recover VSCode Extension Installation
+          debug:
             msg: "{{ (ansible_failed_result.results|selectattr('failed', 'defined')|first).stderr_lines }}"
   rescue:
     - debug:

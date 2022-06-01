@@ -2,11 +2,11 @@
 - hosts: all
 
   vars_files:
+    - vars/flags.yml
     - default.config.yml
     - vars/python.yml
     - vars/homebrew.yml
     - vars/vscode.yml
-    - vars/flags.yml
 
   pre_tasks:
     - name: Include playbook configuration.
@@ -28,9 +28,8 @@
     - role: elliotweiser.osx-command-line-tools
     - role: gordian_jklapacz.mac.homebrew
       tags: ["brew"]
-      when: not skip_brew
     - role: geerlingguy.dotfiles
-      when: not skip_dotfiles
+      when: configure_dotfiles
       tags: ["dotfiles"]
     - role: gordian_jklapacz.mac.mas
       when: mas_installed_apps or mas_installed_app_ids
@@ -45,38 +44,30 @@
         local_home: "{{ lookup('env','HOME') }}"
         local_user: "{{ lookup('env','USER') }}"
       tags: ["ssh"]
-      when: not skip_ssh
+      when: configure_ssh
 
     - import_tasks: tasks/homebrew.yml
       tags: ["brew"]
-      when: not skip_brew
 
     - import_tasks: tasks/python.yml
-      when: not skip_python
       tags: ["python"]
 
     - import_tasks: tasks/sudoers.yml
-      when: configure_sudoers
       tags: ["sudoers"]
 
     - import_tasks: tasks/terminal.yml
-      when: not skip_terminal
       tags: ["terminal"]
 
     - import_tasks: tasks/dock.yml
-      when: not skip_dock
       tags: ["dock"]
 
     - import_tasks: tasks/osx.yml
-      when: not skip_osx
       tags: ["osx"]
 
     - import_tasks: tasks/vscode.yml
-      when: not skip_vscode
       tags: ["vscode"]
 
     - import_tasks: tasks/remap-keys.yml
-      when: not skip_keys
       tags: ["keys"]
 
     - import_tasks: tasks/extra-packages.yml
