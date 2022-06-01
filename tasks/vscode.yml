@@ -32,16 +32,14 @@
       command: "{{ vscode_bin }} --list-extensions"
       register: vscode_installed_extensions
 
-    - debug:
-        var: which_vscode
-    - debug:
-        var: vscode_installed_extensions
-
     - block:
         - name: Install VSCode extensions
           shell: code --install-extension {{ item }}
           when: not item in vscode_installed_extensions.stdout_lines
           loop: "{{ vscode_extensions }}"
+        - name: Install NVim extension
+          shell: code --install-extension {{ vim_extension }}
+          when: vim and not vim_extension in vscode_installed_extensions.stdout_lines
       rescue:
         - debug:
             msg: "{{ (ansible_failed_result.results|selectattr('failed', 'defined')|first).stderr_lines }}"

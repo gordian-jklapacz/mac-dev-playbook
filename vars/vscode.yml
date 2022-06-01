@@ -4,7 +4,6 @@ vscode_extensions:
   - adpyke.vscode-sql-formatter
   - alefragnani.Bookmarks
   - alefragnani.project-manager
-  - asvetliakov.vscode-neovim
   - christian-kohler.npm-intellisense
   - christian-kohler.path-intellisense
   - DaltonMenezes.aura-theme
@@ -43,5 +42,7 @@ vscode_extensions:
   - bbenoist.nix
   - jdinhlife.gruvbox
   - yummygum.city-lights-icon-vsc
+vim: false
+vim_extension: asvetliakov.vscode-neovim
 
 font: Hack Nerd Font Mono
