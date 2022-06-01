@@ -6,11 +6,7 @@
     - vars/python.yml
     - vars/homebrew.yml
     - vars/vscode.yml
-
-  # vars_prompt:
-  #   - name: preferred_dir
-  #     prompt: Specify development directory (default=/Users/foo/bar)
-  #     private: no
+    - vars/flags.yml
 
   pre_tasks:
     - name: Include playbook configuration.
@@ -32,8 +28,9 @@
     - role: elliotweiser.osx-command-line-tools
     - role: gordian_jklapacz.mac.homebrew
       tags: ["brew"]
+      when: not skip_brew
     - role: geerlingguy.dotfiles
-      when: configure_dotfiles
+      when: not skip_dotfiles
       tags: ["dotfiles"]
     - role: gordian_jklapacz.mac.mas
       when: mas_installed_apps or mas_installed_app_ids
@@ -48,12 +45,14 @@
         local_home: "{{ lookup('env','HOME') }}"
         local_user: "{{ lookup('env','USER') }}"
       tags: ["ssh"]
+      when: not skip_ssh
 
     - import_tasks: tasks/homebrew.yml
       tags: ["brew"]
+      when: not skip_brew
 
     - import_tasks: tasks/python.yml
-      when: configure_python
+      when: not skip_python
       tags: ["python"]
 
     - import_tasks: tasks/sudoers.yml
@@ -61,31 +60,27 @@
       tags: ["sudoers"]
 
     - import_tasks: tasks/terminal.yml
-      when: configure_terminal
+      when: not skip_terminal
       tags: ["terminal"]
 
     - import_tasks: tasks/dock.yml
-      when: configure_dock
+      when: not skip_dock
       tags: ["dock"]
 
     - import_tasks: tasks/osx.yml
-      when: configure_osx
+      when: not skip_osx
       tags: ["osx"]
 
     - import_tasks: tasks/vscode.yml
-      when: configure_vscode
+      when: not skip_vscode
       tags: ["vscode"]
 
     - import_tasks: tasks/remap-keys.yml
-      when: configure_keys
+      when: not skip_keys
       tags: ["keys"]
 
     - import_tasks: tasks/extra-packages.yml
       tags: ["extra-packages"]
-
-    - import_tasks: tasks/nix.yml
-      tags: ["nix"]
-      when: configure_nix
 
     - block:
         - name: Run configured post-provision ansible task files.

@@ -1,0 +1,12 @@
+---
+configure_sudoers: true
+
+skip_keys: false
+skip_dotfiles: true
+skip_ssh: true
+skip_brew: false
+skip_python: false
+skip_dock: false
+skip_osx: false
+skip_vscode: false
+skip_terminal: true
