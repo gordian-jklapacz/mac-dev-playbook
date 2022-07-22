@@ -1,0 +1,7 @@
+---
+- name: Ensure atuin config is setup
+  copy:
+    src: files/atuin/config.toml
+    dest: "{{ ansible_env.HOME }}/.config/atuin/config.toml"
+  changed_when: false
+
